@@ -1,40 +1,55 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../auth/AuthContext";
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
 
-  return (
-    <nav className="bg-slate-900 text-white px-6 py-4 flex justify-between">
-      <span className="font-bold text-lg">AI Emergency Operator</span>
+  const linkClass = "hover:text-blue-400 transition-colors";
+  const activeClass = "text-blue-400 font-semibold";
 
-      <div className="space-x-4">
+  return (
+    <nav className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between shadow">
+      <span className="text-xl font-bold tracking-wide">
+        AI Emergency Operator
+      </span>
+
+      <div className="flex items-center gap-6">
         {user && (
           <>
-            <Link to="/">Dashboard</Link>
-            <Link to="/mapa">Mapa</Link>
-            <Link to="/ocorrencias">Ocorrências</Link>
-            <Link to="/perfil">Perfil</Link>
+            <NavLink to="/" className={({ isActive }) => isActive ? activeClass : linkClass}>
+              Dashboard
+            </NavLink>
+            <NavLink to="/mapa" className={({ isActive }) => isActive ? activeClass : linkClass}>
+              Mapa
+            </NavLink>
+            <NavLink to="/ocorrencias" className={({ isActive }) => isActive ? activeClass : linkClass}>
+              Ocorrências
+            </NavLink>
+            <NavLink to="/perfil" className={({ isActive }) => isActive ? activeClass : linkClass}>
+              Perfil
+            </NavLink>
           </>
         )}
 
         {user ? (
           <button
             onClick={logout}
-            className="bg-red-600 px-3 py-1 rounded"
+            className="bg-red-600 hover:bg-red-700 px-4 py-1 rounded transition"
           >
             Logout
           </button>
         ) : (
           <>
-            <Link to="/login">Login</Link>
-            <Link
+            <NavLink to="/login" className={linkClass}>
+              Login
+            </NavLink>
+            <NavLink
               to="/registo"
-              className="bg-white text-black px-3 py-1 rounded"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded transition"
             >
               Registo
-            </Link>
+            </NavLink>
           </>
         )}
       </div>

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "core",
     "users",
+    "incidents",
 ]
 
 MIDDLEWARE = [
@@ -133,6 +134,7 @@ AUTH_USER_MODEL = "users.Operador"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
