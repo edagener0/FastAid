@@ -148,6 +148,17 @@ CORS_ALLOW_HEADERS = [
     "content-type",
 ]
 
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=365),  # 1 ano
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": False,
+
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
 
 
 CORS_ALLOW_HEADERS = list(default_headers)

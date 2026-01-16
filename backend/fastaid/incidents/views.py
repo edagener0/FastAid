@@ -36,10 +36,28 @@ class IncidentDetailView(RetrieveAPIView):
     serializer_class = IncidentSerializer
     permission_classes = [IsAuthenticated]
 
+from rest_framework.generics import UpdateAPIView
+from rest_framework.response import Response
+
 class IncidentUpdateView(UpdateAPIView):
     queryset = Incident.objects.all()
     serializer_class = IncidentUpdateSerializer
-    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        # valida input
+        serializer = IncidentUpdateSerializer(
+            instance,
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        # responde com serializer COMPLETO
+        return Response(IncidentSerializer(instance).data)
+
 
 class IncidentJoinView(APIView):
     permission_classes = [IsAuthenticated]

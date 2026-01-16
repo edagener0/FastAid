@@ -36,6 +36,7 @@ class IncidentCreateSerializer(serializers.ModelSerializer):
             "titulo",
             "descricao",
             "tipo",
+            "estado",
             "latitude",
             "longitude",
             "distrito",
@@ -48,18 +49,16 @@ class IncidentCreateSerializer(serializers.ModelSerializer):
         incident.operadores.set(operadores)
         return incident
 
-class IncidentUpdateSerializer(serializers.ModelSerializer):
-    operadores = serializers.PrimaryKeyRelatedField(
-        many=True,
-        queryset=Operador.objects.all(),
-        required=False
-    )
 
+class IncidentUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Incident
         fields = [
             "titulo",
             "descricao",
+            "tipo",
             "estado",
-            "operadores",
+            "distrito",
+            "latitude",
+            "longitude",
         ]
