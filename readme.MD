@@ -85,7 +85,7 @@ npm run dev
 ```
 4. Route your application API's traffic through a cloudflare tunnel (remember that django rest framework runs by default on port 8000)
 ```bash
-cloudflared tunnel --url http://localhost:8000
+cloudflare tunnel --url http://localhost:8000
 ``` 
 5. Register an account on [Twilio](https://www.twilio.com/en-us) with free trial.
 6. Buy a US phone number with the free credits since it's the cheapest.
