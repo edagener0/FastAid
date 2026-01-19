@@ -90,4 +90,10 @@ cloudflared tunnel --url http://localhost:8000
 5. Register an account on [Twilio](https://www.twilio.com/en-us) with free trial.
 6. Buy a US phone number with the free credits since it's the cheapest.
 7. Add the endpoint as a phone number webhook: https://{cloudflare_domain}/calls/receive/
-8. The application is ready.
+8. Get a Gemini API key at [Google AI Studio](https://aistudio.google.com/welcome)
+9. Create a .env file in the backend directory with the following content:
+```
+SECRET_KEY="{YOUR SECRET KEY}"
+GEMINI_API_KEY="{YOUR_GEMINI_API_KEY}"
+```
+10. The application is ready.

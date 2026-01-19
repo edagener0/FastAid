@@ -5,7 +5,6 @@ from django.conf import settings
 from users.models import Operador
 from incidents.models import Incident
 from google import genai
-from dotenv import load_dotenv
 import os
 import json
 from decimal import Decimal
@@ -15,9 +14,7 @@ Olá, esta mensagem vai ser gravada. Por favor descreva a sua situação!
 Reforços serão enviados para o seu local!
 """
 
-load_dotenv()
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
-
 
 @csrf_exempt
 def receive_call(request):
