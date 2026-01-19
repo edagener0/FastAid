@@ -25,7 +25,13 @@ SECRET_KEY = 'django-insecure-%lwforw#^h1dg=@cp_3*8+yws3*a34981m$=i@@#qhq($tbib#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "equipped-before-sbjct-earl.trycloudflare.com",
+    "blog-rapidly-damaged-mathematics.trycloudflare.com"
+]
+
 
 
 # Application definition
@@ -151,8 +157,8 @@ CORS_ALLOW_HEADERS = [
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=365),  # 1 ano
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1000),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1000),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": False,
 

@@ -1,14 +1,21 @@
-import { useState, useContext, type FormEvent } from "react";
+import { useState, useContext, useEffect, type FormEvent } from "react";
 import { AuthContext } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const { login } = useContext(AuthContext);
+  const { user, login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+
+  // 🔹 Redireciona para dashboard se já estiver logado
+  useEffect(() => {
+    if (user) {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -16,7 +23,7 @@ export default function Login() {
 
     try {
       await login(username, password);
-      navigate("/");
+      navigate("/"); // redireciona após login
     } catch {
       setError("Credenciais inválidas.");
     }
