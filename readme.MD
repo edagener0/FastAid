@@ -1,5 +1,7 @@
 # FastAid
 
+This project was developed during our participation in the [Tecstorm Hackathon](https://www.tecstorm.pt/).
+
 ## Table Of Contents
 - [FastAid](#fastaid)
   - [Table Of Contents](#table-of-contents)
