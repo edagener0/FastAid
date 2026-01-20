@@ -73,8 +73,12 @@ git clone https://github.com/edagener0/FastAid.git
 ```bash
 cd FastAid/backend
 python3 -m venv .venv
+# Activate virtual environment in linux
+source ./.venv/bin/activate
 pip install -r requirements.txt
 cd fastaid
+python3 manage.py makemigrations
+python3 manage.py migrate
 python3 manage.py runserver
 ```
 3. Open a new terminal, install the dependencies and execute the frontend.
