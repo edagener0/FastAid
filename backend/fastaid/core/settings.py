@@ -26,13 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "equipped-before-sbjct-earl.trycloudflare.com",
-    "blog-rapidly-damaged-mathematics.trycloudflare.com"
+    "blog-rapidly-damaged-mathematics.trycloudflare.com",
+    'fastaidprod-839763189279.europe-west1.run.app'
 ]
 
 
