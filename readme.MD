@@ -99,5 +99,6 @@ cloudflare tunnel --url http://localhost:8000
 ```
 SECRET_KEY="{YOUR SECRET KEY}"
 GEMINI_API_KEY="{YOUR_GEMINI_API_KEY}"
+VITE_PHONE_NUMBER="{TWILIO PHONE NUMBER WITH COUNTRY CODE}"
 ```
 10. The application is ready.
