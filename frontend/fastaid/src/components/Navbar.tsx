@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../auth/AuthContext";
+const phoneNumber = import.meta.env.VITE_PHONE_NUMBER;
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
@@ -13,6 +14,10 @@ export default function Navbar() {
       <span className="text-xl font-bold tracking-wide">
         FastAid
       </span>
+
+      <div className="text-white">
+        <span>{phoneNumber}</span>
+      </div>
 
       <div className="flex items-center gap-6">
         {user && (
