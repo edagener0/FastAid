@@ -10,8 +10,8 @@ import json
 from decimal import Decimal
 
 PREDEFINED_MESSAGE = """
-Olá, esta mensagem vai ser gravada. Por favor descreva a sua situação!
-Reforços serão enviados para o seu local!
+Hi, this message will be recorded! Please describe your situation!
+Backup will be on its way soon!
 """
 
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
@@ -23,7 +23,7 @@ def receive_call(request):
     resp.say(
         PREDEFINED_MESSAGE,
         voice="alice",
-        language="pt-PT"
+        language="en-US"
     )
 
     
