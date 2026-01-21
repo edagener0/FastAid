@@ -100,7 +100,7 @@ cloudflare tunnel --url http://localhost:8000
 SECRET_KEY="{YOUR SECRET KEY}"
 GEMINI_API_KEY="{YOUR_GEMINI_API_KEY}"
 ```
-10. Create a .env file in the frontend directory with the following content:
+10. Create a .env file in the frontend/fastaid directory with the following content:
 ```
 VITE_PHONE_NUMBER="{TWILIO PHONE NUMBER WITH COUNTRY CODE}"
 ```

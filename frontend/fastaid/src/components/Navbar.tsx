@@ -5,7 +5,6 @@ const phoneNumber = import.meta.env.VITE_PHONE_NUMBER;
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
-
   const linkClass = "hover:text-blue-400 transition-colors";
   const activeClass = "text-blue-400 font-semibold";
 
