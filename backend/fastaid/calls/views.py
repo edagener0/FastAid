@@ -32,7 +32,6 @@ def receive_call(request):
         method="POST",
         max_length=300,
         transcribe=True,
-        transcribe_callback="/calls/recording/",
         play_beep=True
     )
 
