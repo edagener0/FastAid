@@ -34,7 +34,8 @@ ALLOWED_HOSTS = [
     "equipped-before-sbjct-earl.trycloudflare.com",
     "blog-rapidly-damaged-mathematics.trycloudflare.com",
     "fastaidprod-839763189279.europe-west1.run.app",
-    "see-where-weapon-juan.trycloudflare.com"
+    "see-where-weapon-juan.trycloudflare.com",
+    "api.fastaid.pt"
 ]
 
 
