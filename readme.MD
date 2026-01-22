@@ -1,6 +1,7 @@
 # FastAid
 
 This project was developed during our participation in the [Tecstorm Hackathon](https://www.tecstorm.pt/).
+Check our [live demo](https://www.youtube.com/watch?v=9lJBViO4ruQ)!
 
 ## Table Of Contents
 - [FastAid](#fastaid)
