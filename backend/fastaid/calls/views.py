@@ -32,8 +32,10 @@ def receive_call(request):
         method="POST",
         max_length=300,
         transcribe=True,
+        transcribe_callback="/calls/transcription/",
         play_beep=True
     )
+
 
     return HttpResponse(str(resp), content_type="text/xml")
 
@@ -41,6 +43,11 @@ def receive_call(request):
 
 @csrf_exempt
 def recording(request):
+    return HttpResponse("Recording saved", status=200)
+
+
+@csrf_exempt
+def transcription(request):
     """
     Recebe a transcrição do Twilio, envia para a IA e cria uma ocorrência.
     Sempre gera uma ocorrência, mesmo sem TranscriptionText.
