@@ -16,6 +16,9 @@ Check our [live demo](https://www.youtube.com/watch?v=9lJBViO4ruQ)!
     - [What we learned](#what-we-learned)
     - [What's next for FastAid](#whats-next-for-fastaid)
   - [Executing from source code](#executing-from-source-code)
+  - [Building](#building)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
 
 ## Pitch
 
@@ -106,3 +109,25 @@ GEMINI_API_KEY="{YOUR_GEMINI_API_KEY}"
 VITE_PHONE_NUMBER="{TWILIO PHONE NUMBER WITH COUNTRY CODE}"
 ```
 11. The application is ready.
+
+## Building
+
+## Frontend
+```bash
+cd backend/
+docker build --build-arg VITE_API_BASE_URL="" --build-arg VITE_PHONE_NUMBER=""   -t fastaidprodfront -f PRODDockerfile .
+docker run -p 1234:80 fastaidprodfront
+```
+
+## Backend
+```bash
+cd frontend/fastaid/
+docker build -t fastaidprodback -f PRODDockerfile .
+docker run -d \
+  -p 7345:7345 \
+  -e GEMINI_API_KEY="" \
+  -e SECRET_KEY="" \
+  -e CLIENT_HOST="" \
+  --name fastaid_backend \
+  fastaidprodback
+```
