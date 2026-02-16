@@ -1,8 +1,10 @@
 // src/api/axios.ts
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_PHONE_NUMBER;
+
 const api = axios.create({
-  baseURL: "https://api.fastaid.pt/",
+  baseURL: API_BASE_URL,
 });
 
 api.interceptors.request.use((config) => {

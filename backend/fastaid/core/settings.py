@@ -35,7 +35,8 @@ ALLOWED_HOSTS = [
     "blog-rapidly-damaged-mathematics.trycloudflare.com",
     "fastaidprod-839763189279.europe-west1.run.app",
     "see-where-weapon-juan.trycloudflare.com",
-    "api.fastaid.pt"
+    "api.fastaid.pt",
+    os.environ.get("CLIENT_HOST"),
 ]
 
 

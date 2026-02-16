@@ -46,7 +46,7 @@ class IncidentUpdateView(UpdateAPIView):
     def patch(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        # valida input
+        
         serializer = IncidentUpdateSerializer(
             instance,
             data=request.data,
@@ -55,7 +55,7 @@ class IncidentUpdateView(UpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        # responde com serializer COMPLETO
+        
         return Response(IncidentSerializer(instance).data)
 
 
@@ -66,9 +66,9 @@ class IncidentJoinView(APIView):
         incident = get_object_or_404(Incident, pk=pk)
         user = request.user
 
-        # Evita BadRequest se o usuário já estiver na lista
+        
         if incident.operadores.filter(pk=user.pk).exists():
-            # apenas retorna o serializer sem erro
+            
             serializer = IncidentSerializer(incident, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -86,7 +86,7 @@ class IncidentLeaveView(APIView):
         incident = get_object_or_404(Incident, pk=pk)
         user = request.user
 
-        # Evita BadRequest se o usuário não estiver na lista
+        
         if not incident.operadores.filter(pk=user.pk).exists():
             serializer = IncidentSerializer(incident, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
