@@ -123,11 +123,5 @@ docker run -p 1234:80 fastaidprodfront
 ```bash
 cd frontend/fastaid/
 docker build -t fastaidprodback -f PRODDockerfile .
-docker run -d \
-  -p 7345:7345 \
-  -e GEMINI_API_KEY="" \
-  -e SECRET_KEY="" \
-  -e CLIENT_HOST="" \
-  --name fastaid_backend \
-  fastaidprodback
+docker run -d -p 7345:7345 -e GEMINI_API_KEY="" -e SECRET_KEY="" -e CLIENT_HOST="" --name fastaid_backend fastaidprodback
 ```
