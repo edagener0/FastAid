@@ -152,9 +152,20 @@ REST_FRAMEWORK = {
     ),
 }
 
+
 CORS_ALLOWED_ORIGINS = [
-    "https://fastaid.pt",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
+
+client_host = os.environ.get("CLIENT_HOST")
+if client_host:
+    if not client_host.startswith("http"):
+        CORS_ALLOWED_ORIGINS.append(f"https://{client_host}")
+    else:
+        CORS_ALLOWED_ORIGINS.append(client_host)
+
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = [
     "authorization",
