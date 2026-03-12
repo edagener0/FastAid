@@ -12,7 +12,7 @@ Return ONLY valid JSON, with no comments or extra text, in this exact schema:
 {{
 "title": "short human-readable incident title",
 "description": "short description of the incident, in natural language",
-"report": "detailed report of the incident, with all important details",
+"report": "detailed report of the incident, with all important details here you should specify what portuguese autorities should do in order to respond as quickly as possible to the incident. how they should move and how they should act. there is no max len so make sure to be extensive here and provide helpful and insightful information for the portuguese authories to handle (Policia, INEM, bombeiros, GNR, Proteção Civil), especially how they should coordinate.",
 "lat": 37.7749,
 "lon": -122.4194,
 "place": "the place for the corresponding longitude. if there is a place u should provide latitude and longitude."
