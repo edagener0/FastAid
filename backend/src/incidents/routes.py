@@ -2,7 +2,7 @@ from db.session import SessionDep
 from .models import Incident
 from typing import Annotated
 from fastapi import Query, HTTPException
-from sqlmodel import select
+from sqlmodel import desc, select
 import uuid
 from fastapi import APIRouter
 
@@ -10,15 +10,17 @@ router = APIRouter()
 
 @router.get("")
 def get_incidents(
-    session: SessionDep, 
-    offset: int = 0, 
-    limit: Annotated[int, Query(le=10)] = 10
-) -> list[Incident]:
-    
+    session: SessionDep,
+    offset: int = 0,
+    limit: Annotated[int, Query(le=10)] = 10,
+):
     incidents = session.exec(
-        select(Incident).offset(offset).limit(limit)
+        select(Incident)
+        .order_by(desc(Incident.created_at))
+        .offset(offset)
+        .limit(limit)
     ).all()
-
+    
     return incidents
 
 @router.get("/{incident_id}")

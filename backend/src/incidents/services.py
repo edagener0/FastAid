@@ -3,6 +3,7 @@ import os
 from google.genai.chats import GenerateContentResponse
 import json
 
+
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def generate_ai_response(prompt: str) -> GenerateContentResponse:
