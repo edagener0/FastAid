@@ -1,8 +1,9 @@
-from google import genai
 import os
-from google.genai.chats import GenerateContentResponse
 import json
-
+from google import genai
+from google.genai.chats import GenerateContentResponse
+from twilio.rest import Client
+from .messages import SMS_TO_SEND
 
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -24,3 +25,18 @@ def clean_ai_response(response: GenerateContentResponse) -> str:
 
 def raw_text_2_json(raw_text: str) -> dict:
     return json.loads(raw_text)
+
+def send_sms_message(number_to_send: str, details_link: str):
+    client = Client(
+        os.environ.get('TWILIO_ACCOUNT_SID'), 
+        os.environ.get('TWILIO_AUTH_TOKEN'))
+
+    content = SMS_TO_SEND.format(
+        number=number_to_send,
+        link=details_link)
+
+    message = client.messages.create(
+        from_=os.environ.get('TWILIO_SENDER_NUMBER'), # Your Twilio number
+        to=number_to_send,
+        body=content
+    )
