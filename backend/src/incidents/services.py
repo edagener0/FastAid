@@ -36,7 +36,7 @@ def send_sms_message(number_to_send: str, details_link: str):
         link=details_link)
 
     message = client.messages.create(
-        from_=os.environ.get('TWILIO_SENDER_NUMBER'), # Your Twilio number
+        from_=os.environ.get('TWILIO_SENDER_NUMBER'),
         to=number_to_send,
         body=content
     )

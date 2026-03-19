@@ -5,7 +5,7 @@ from .messages import INITIAL_MESSAGE, INCIDENT_EXTRACTION_PROMPT
 from incidents.models import Incident
 from incidents.services import generate_ai_response, clean_ai_response, raw_text_2_json, send_sms_message
 from db.session import SessionDep
-
+import os
 router = APIRouter()
 
 
@@ -22,12 +22,6 @@ def record():
     )
 
     return Response(str(response), media_type="application/xml")
-
-@router.get("/sendSMSTest")
-def send_sms_test():
-    send_sms_message(
-        "+351966036754", #Bruno Brás NUMBER
-        "https://google.com/a1ff4261-1f39-43a5-8f6e-03188500242f") #LINK PARA ACOMPANHAMENTO DA OCORRENCIA
 
 @router.post("/transcription")
 async def handle_transcription(request: Request, session: SessionDep):
@@ -71,8 +65,8 @@ async def handle_transcription(request: Request, session: SessionDep):
     response = VoiceResponse()
     response.say("Backup will be on its way soon. Thank you for contacting us.")
 
-    #send_sms_message(
-    #    phone,
-    #   "https://google.com/{incident.id})
+    send_sms_message(
+        phone,
+       f"https://{os.getenv("FRONTEND_DOMAIN")}/{incident.id}")
 
     return Response(str(response), media_type="application/xml")
