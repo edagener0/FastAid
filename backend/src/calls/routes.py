@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import Response
 from twilio.twiml.voice_response import VoiceResponse
-from .messages import INITIAL_MESSAGE, INCIDENT_EXTRACTION_PROMPT
-from incidents.models import Incident
-from incidents.services import generate_ai_response, clean_ai_response, raw_text_2_json, send_sms_message
+
+from core.config import settings
 from db.session import SessionDep
-import os
+from incidents.models import Incident
+from incidents.services import clean_ai_response, generate_ai_response, raw_text_2_json, send_sms_message
+
+from .messages import INCIDENT_EXTRACTION_PROMPT, INITIAL_MESSAGE
+
 router = APIRouter()
 
 
@@ -36,9 +39,12 @@ async def handle_transcription(request: Request, session: SessionDep):
 
     prompt = INCIDENT_EXTRACTION_PROMPT.format(transcription=transcription_text)
 
-    ai_raw_response = generate_ai_response(prompt)
-    cleaned = clean_ai_response(ai_raw_response)
-    extracted = raw_text_2_json(cleaned)
+    try:
+        ai_raw_response = generate_ai_response(prompt)
+        cleaned = clean_ai_response(ai_raw_response)
+        extracted = raw_text_2_json(cleaned)
+    except Exception as error:
+        raise HTTPException(status_code=502, detail="Unable to process call transcription.") from error
 
     title = extracted.get("title", "Incident")
     description = extracted.get("description", transcription_text[:200])
@@ -67,6 +73,7 @@ async def handle_transcription(request: Request, session: SessionDep):
 
     send_sms_message(
         phone,
-       f"https://{os.getenv("FRONTEND_DOMAIN")}/{incident.id}")
+        f"{settings.frontend_base_url.rstrip('/')}/{incident.id}",
+    )
 
     return Response(str(response), media_type="application/xml")

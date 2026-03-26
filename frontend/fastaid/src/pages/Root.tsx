@@ -1,11 +1,13 @@
 import { Search, ShieldPlus } from 'lucide-react';
-import React from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+import { useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 function Root() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchQuery, setSearchQuery] = useState('');
   const isNearbyPage = location.pathname === '/perto-de-si';
+  const isMapPage = location.pathname === '/';
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_32%),linear-gradient(180deg,_#f8fbff_0%,_#eff4fb_100%)]">
@@ -31,6 +33,8 @@ function Root() {
               <input
                 type="text"
                 placeholder="Pesquisar zona, incidente ou ponto de referencia"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
                 className="h-12 w-full rounded-full border border-slate-200/80 bg-slate-50/90 pl-11 pr-5 text-sm text-slate-700 outline-none transition focus:border-cyan-300 focus:bg-white focus:ring-4 focus:ring-cyan-100"
               />
             </label>
@@ -40,7 +44,7 @@ function Root() {
             <button
               onClick={() => navigate('/')}
               className={`rounded-full px-4 py-2 text-sm transition ${
-                !isNearbyPage ? 'bg-slate-950 text-white shadow-lg shadow-slate-900/15' : 'text-slate-600 hover:bg-slate-100'
+                isMapPage ? 'bg-slate-950 text-white shadow-lg shadow-slate-900/15' : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
               Mapa
@@ -57,7 +61,7 @@ function Root() {
         </div>
       </nav>
 
-      <Outlet />
+      <Outlet context={{ searchQuery }} />
     </div>
   );
 }

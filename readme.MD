@@ -1,127 +1,171 @@
 # FastAid
 
-This project was developed during our participation in the [Tecstorm Hackathon](https://www.tecstorm.pt/).
-Check our [live demo](https://www.youtube.com/watch?v=9lJBViO4ruQ)!
+FastAid e uma plataforma de apoio operacional para incidentes, com:
 
-## Table Of Contents
-- [FastAid](#fastaid)
-  - [Table Of Contents](#table-of-contents)
-  - [Pitch](#pitch)
-  - [About](#about)
-    - [Inspiration](#inspiration)
-    - [What it does](#what-it-does)
-    - [How we built it](#how-we-built-it)
-    - [Challenges we ran into](#challenges-we-ran-into)
-    - [Accomplishments we're proud of](#accomplishments-were-proud-of)
-    - [What we learned](#what-we-learned)
-    - [What's next for FastAid](#whats-next-for-fastaid)
-  - [Executing from source code](#executing-from-source-code)
-  - [Building](#building)
-    - [Frontend](#frontend)
-    - [Backend](#backend)
+- backend em FastAPI + SQLModel
+- frontend em React + Vite
+- base de dados PostgreSQL
+- stack completa via Docker Compose
 
-## Pitch
+O frontend consome a API do backend por `/api`, tanto em desenvolvimento como em Docker.
 
-Our goal is to optimize the national health service through an application that enables efficient contact with emergency services by integrating artificial intelligence into the communication process.
+## Stack
 
-## About
+- Backend: FastAPI, SQLModel, Uvicorn, Pydantic Settings
+- Frontend: React, TypeScript, Vite, React Router, Leaflet
+- Base de dados: PostgreSQL 17
+- Infra: Docker, Docker Compose, GitHub Actions
 
-### Inspiration
+## Estrutura
 
-The national health service is in decline, which contributes to widespread dissatisfaction among the population.
+```text
+.
+├── backend
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── src
+├── frontend/fastaid
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── src
+├── .github/workflows
+└── docker-compose.yml
+```
 
-### What it does
+## Requisitos Locais
 
-The application enables easy management of national health service resources, allowing operators (Firefighters, Police, Emergency Medical Services, Civil Protection, etc.) to coordinate responses to incidents.
+- Python 3.13
+- Node.js 24+
+- npm
+- PostgreSQL 17
 
-The application features an interactive map where all ongoing incidents can be viewed and updated in real time.
+## Variaveis de Ambiente
 
-It also includes a dashboard that allows operators to quickly see the number of available personnel and the types of incidents occurring.
+Na raiz do projeto existe um exemplo para Docker:
 
-Additionally, the application provides a dedicated number that citizens can call in case of emergencies. When a call is made, a generic message informs the caller that the emergency services have received their request and reinforcements will be dispatched shortly. The call is recorded, and the caller then communicates with an AI system, providing all necessary information. The AI is responsible for creating the incident report and allocating the appropriate resources for its resolution.
-
-### How we built it
-
-The backend was developed in Python using Django Rest Framework.
-The frontend was built with TypeScript using React.
-Twilio was used to handle phone call functionality.
-To transcribe calls and create incident reports, we integrated the Gemini Pro API with Twilio.
-
-### Challenges we ran into
-
-Integrating the application with Twilio and the Gemini API was particularly challenging.
-It was necessary to create an API endpoint responsible for transcribing calls, parsing the content, analyzing it with AI, and finally creating the incident report.
-
-### Accomplishments we're proud of
-
-We are extremely proud of the work we have accomplished! Developing this application was challenging, but we strongly believe the idea has great potential given the decline of the national health system.
-We see it as a solution that could improve overall societal efficiency, and successfully bringing it to life is something we take pride in.
-
-### What we learned
-
-We gained extensive experience with REST APIs and frontend development. Additionally, we learned how to connect a frontend to a backend, and how to work with external APIs, specifically Gemini and Twilio.
-Integrating phone calls and artificial intelligence into the application was especially insightful.
-
-### What's next for FastAid
-
-We believe FastAid could represent the future of the national health system.
-Our goal is to integrate the application across all Fire Departments, Police Stations, Hospitals, and other emergency services, centralizing the system to make it more dynamic, responsive, and efficient for all Portuguese citizens.
-
-## Executing from source code
-
-1. Download the source code
 ```bash
-git clone https://github.com/edagener0/FastAid.git
+cp .env.example .env
 ```
-2. Open a new terminal, create a virtual environment, install dependencies and execute the backend.
-```bash
-cd FastAid/backend
-python3 -m venv .venv
-# Activate virtual environment in linux
-source ./.venv/bin/activate
-pip install -r requirements.txt
-cd fastaid
-python3 manage.py makemigrations
-python3 manage.py migrate
-python3 manage.py runserver
-```
-3. Open a new terminal, install the dependencies and execute the frontend.
-```bash
-cd FastAid/frontend/fastaid
-npm install
-npm run dev
-```
-4. Route your application API's traffic through a cloudflare tunnel (remember that django rest framework runs by default on port 8000)
-```bash
-cloudflared tunnel --url http://localhost:8000
-``` 
-5. Register an account on [Twilio](https://www.twilio.com/en-us) with free trial.
-6. Buy a US phone number with the free credits since it's the cheapest.
-7. Add the endpoint as a phone number webhook: https://{cloudflare_domain}/calls/receive/
-8. Get a Gemini API key at [Google AI Studio](https://aistudio.google.com/welcome)
-9. Create a .env file in the backend directory with the following content:
-```
-SECRET_KEY="{YOUR SECRET KEY}"
-GEMINI_API_KEY="{YOUR_GEMINI_API_KEY}"
-```
-10. Create a .env file in the frontend/fastaid directory with the following content:
-```
-VITE_PHONE_NUMBER="{TWILIO PHONE NUMBER WITH COUNTRY CODE}"
-```
-11. The application is ready.
 
-## Building
+Para o backend local:
 
-### Frontend
 ```bash
-cd backend/
-docker build --build-arg VITE_API_BASE_URL="" --build-arg VITE_PHONE_NUMBER=""   -t fastaidprodfront -f PRODDockerfile .
-docker run -p 1234:80 fastaidprodfront
+cp backend/.env.example backend/.env
+```
+
+Para o frontend local:
+
+```bash
+cp frontend/fastaid/.env.example frontend/fastaid/.env
 ```
 
 ### Backend
-```bash
-cd frontend/fastaid/
-docker build -t fastaidprodback -f PRODDockerfile .
-docker run -d -p 7345:7345 -e GEMINI_API_KEY="" -e SECRET_KEY="" -e CLIENT_HOST="" --name fastaid_backend fastaidprodback
+
+Exemplo em [backend/.env.example](/Users/renato/Documents/MapaTec/FastAid/backend/.env.example):
+
+```env
+DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/fastaid
+FRONTEND_BASE_URL=http://localhost:5173
+CORS_ORIGINS=http://localhost:5173,http://localhost:4173
+GEMINI_API_KEY=
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_SENDER_NUMBER=
 ```
+
+### Frontend
+
+Exemplo em [frontend/fastaid/.env.example](/Users/renato/Documents/MapaTec/FastAid/frontend/fastaid/.env.example):
+
+```env
+VITE_API_BASE_URL=/api
+VITE_BACKEND_TARGET=http://localhost:8000
+```
+
+## Correr Localmente
+
+### 1. Arrancar PostgreSQL
+
+Cria uma base de dados chamada `fastaid` e ajusta o `DATABASE_URL` do backend se necessario.
+
+### 2. Arrancar o backend
+
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cd src
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+API disponivel em `http://127.0.0.1:8000`.
+
+### 3. Arrancar o frontend
+
+```bash
+cd frontend/fastaid
+npm ci
+npm run dev
+```
+
+Frontend disponivel em `http://localhost:5173`.
+
+Em desenvolvimento, o Vite faz proxy de `/api` para `VITE_BACKEND_TARGET`.
+
+## Correr com Docker Compose
+
+```bash
+docker compose up --build -d
+```
+
+Servicos:
+
+- frontend: `http://127.0.0.1:8080`
+- backend: `http://127.0.0.1:8000`
+- health via frontend/nginx: `http://127.0.0.1:8080/api/health`
+
+Para parar:
+
+```bash
+docker compose down
+```
+
+Para remover tambem o volume da base de dados:
+
+```bash
+docker compose down -v
+```
+
+## Validacao
+
+Comandos uteis:
+
+```bash
+python3 -m compileall backend/src
+```
+
+```bash
+cd frontend/fastaid
+npm run lint
+npm run build
+```
+
+```bash
+docker compose ps
+curl http://127.0.0.1:8080/api/health
+curl "http://127.0.0.1:8080/api/incidents?limit=100"
+```
+
+## CI/CD
+
+Os workflows estao em [/.github/workflows](/Users/renato/Documents/MapaTec/FastAid/.github/workflows):
+
+- [ci.yml](/Users/renato/Documents/MapaTec/FastAid/.github/workflows/ci.yml): instala dependencias, compila o backend e faz build do frontend
+- [docker-publish.yml](/Users/renato/Documents/MapaTec/FastAid/.github/workflows/docker-publish.yml): faz build e publish das imagens para GHCR
+
+## Notas
+
+- O backend cria as tabelas automaticamente no arranque.
+- O endpoint `GET /incidents` aceita ate `limit=100`, o que alinha com o consumo atual do frontend.
+- `CORS_ORIGINS` pode ser configurado como lista separada por virgulas, conforme os ficheiros `.env.example`.

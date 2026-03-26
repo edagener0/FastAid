@@ -33,6 +33,7 @@ pydantic==2.12.5
 pydantic-extra-types==2.11.0
 pydantic-settings==2.13.1
 pydantic_core==2.41.5
+psycopg[binary]==3.2.12
 Pygments==2.19.2
 python-dotenv==1.2.2
 python-multipart==0.0.22
@@ -51,6 +52,7 @@ starlette==0.52.1
 tenacity==9.1.4
 tomli==2.4.0
 typer==0.24.1
+twilio==9.8.5
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==2.6.3

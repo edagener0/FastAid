@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { MapContainer, Marker, Popup, TileLayer, ZoomControl, useMap } from 'react-leaflet';
-import { mockOccurrences } from '../data/mockOccurrences';
-import React from 'react';
+
+import { useUserLocation } from '../hooks/useUserLocation';
+import { buildIncidentRouteUrl, formatRelativeTime, getIncidentCoordinates } from '../lib/incidents';
+import type { Incident } from '../types/incidents';
 
 const DefaultIcon = L.icon({
   iconUrl: markerIcon,
@@ -39,27 +41,15 @@ function MapController({ center }: { center: [number, number] | null }) {
 }
 
 interface MapProps {
-  showOccurrences?: boolean;
+  incidents: Incident[];
+  selectedIncidentId?: string | null;
 }
 
-function Map({ showOccurrences = true }: MapProps) {
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+function Map({ incidents, selectedIncidentId = null }: MapProps) {
+  const { userLocation } = useUserLocation();
   const initialCenter: [number, number] = [38.7223, -9.1393];
-
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
-      },
-      (error) => {
-        console.log('Erro ao obter localizacao:', error);
-      }
-    );
-  }, []);
+  const selectedIncident = incidents.find((incident) => incident.id === selectedIncidentId) ?? null;
+  const selectedCoordinates = selectedIncident ? getIncidentCoordinates(selectedIncident) : null;
 
   return (
     <div className="map-shell h-full w-full">
@@ -75,7 +65,7 @@ function Map({ showOccurrences = true }: MapProps) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <ZoomControl position="bottomright" />
-        <MapController center={userLocation} />
+        <MapController center={selectedCoordinates ?? userLocation} />
 
         {userLocation && (
           <Marker key="user-location" position={userLocation} icon={UserIcon}>
@@ -89,23 +79,38 @@ function Map({ showOccurrences = true }: MapProps) {
           </Marker>
         )}
 
-        {showOccurrences &&
-          mockOccurrences.map((occurrence) => (
+        {incidents.map((incident) => {
+          const coordinates = getIncidentCoordinates(incident);
+          if (!coordinates) {
+            return null;
+          }
+
+          return (
             <Marker
-              key={`occurrence-${occurrence.id}`}
-              position={occurrence.coordinates}
+              key={`incident-${incident.id}`}
+              position={coordinates}
               icon={DefaultIcon}
             >
               <Popup>
                 <div className="min-w-[170px]">
-                  <strong className="text-cyan-700">{occurrence.type}</strong>
+                  <strong className="text-cyan-700">{incident.title}</strong>
                   <br />
-                  <span className="text-xs text-gray-500">{occurrence.time}</span>
-                  <p className="mt-2 text-sm text-slate-600">{occurrence.description}</p>
+                  <span className="text-xs text-gray-500">{formatRelativeTime(incident.created_at)}</span>
+                  <p className="mt-2 text-sm text-slate-600">{incident.description}</p>
+                  {incident.place && <p className="mt-2 text-xs text-slate-500">{incident.place}</p>}
+                  <a
+                    href={buildIncidentRouteUrl(coordinates)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 inline-flex rounded-full bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white"
+                  >
+                    Abrir rota
+                  </a>
                 </div>
               </Popup>
             </Marker>
-          ))}
+          );
+        })}
       </MapContainer>
     </div>
   );

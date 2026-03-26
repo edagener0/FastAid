@@ -12,7 +12,7 @@ router = APIRouter()
 def get_incidents(
     session: SessionDep,
     offset: int = 0,
-    limit: Annotated[int, Query(le=10)] = 10,
+    limit: Annotated[int, Query(ge=1, le=100)] = 100,
 ):
     incidents = session.exec(
         select(Incident)

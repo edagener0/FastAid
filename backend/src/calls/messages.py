@@ -23,9 +23,9 @@ Rules:
 * "title" must be under 100 characters.
 * "description" must be under 200 characters.
 * "report" can be longer and more detailed.
-* If the transcription does not clearly specify a location that can be mapped to coordinates, set "place_specified" to false and set "lat" and "lon" to null.
-* If you infer a location, use realistic coordinates for that location and set "place_specified" to true.
-* Always infer a place, latitude and longitude for the given text.
+* If the transcription does not clearly specify a location that can be mapped to coordinates, set "lat" and "lon" to null.
+* If you infer a location, use realistic coordinates for that location.
+* Always try to infer a place, latitude and longitude for the given text.
 Transcription: {transcription}
 
 """
