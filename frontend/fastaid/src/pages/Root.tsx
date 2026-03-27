@@ -27,19 +27,6 @@ function Root() {
             </button>
           </div>
 
-          <div className="hidden flex-1 justify-center md:flex">
-            <label className="relative w-full max-w-xl">
-              <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Pesquisar zona, incidente ou ponto de referencia"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                className="h-12 w-full rounded-full border border-slate-200/80 bg-slate-50/90 pl-11 pr-5 text-sm text-slate-700 outline-none transition focus:border-cyan-300 focus:bg-white focus:ring-4 focus:ring-cyan-100"
-              />
-            </label>
-          </div>
-
           <div className="flex items-center justify-end gap-2 md:flex-1">
             <button
               onClick={() => navigate('/')}

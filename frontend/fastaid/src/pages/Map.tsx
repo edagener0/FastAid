@@ -91,23 +91,6 @@ function Map({ incidents, selectedIncidentId = null }: MapProps) {
               position={coordinates}
               icon={DefaultIcon}
             >
-              <Popup>
-                <div className="min-w-[170px]">
-                  <strong className="text-cyan-700">{incident.title}</strong>
-                  <br />
-                  <span className="text-xs text-gray-500">{formatRelativeTime(incident.created_at)}</span>
-                  <p className="mt-2 text-sm text-slate-600">{incident.description}</p>
-                  {incident.place && <p className="mt-2 text-xs text-slate-500">{incident.place}</p>}
-                  <a
-                    href={buildIncidentRouteUrl(coordinates)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-3 inline-flex rounded-full bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white"
-                  >
-                    Abrir rota
-                  </a>
-                </div>
-              </Popup>
             </Marker>
           );
         })}
