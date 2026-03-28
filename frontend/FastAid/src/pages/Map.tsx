@@ -4,10 +4,12 @@ import 'leaflet/dist/leaflet.css';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { MapContainer, Marker, Popup, TileLayer, ZoomControl, useMap } from 'react-leaflet';
+import { useNavigate } from 'react-router-dom';
 
 import { useUserLocation } from '../hooks/useUserLocation';
-import { buildIncidentRouteUrl, formatRelativeTime, getIncidentCoordinates } from '../lib/incidents';
-import type { Incident } from '../types/incidents';
+import { translations } from '../lib/i18n';
+import { getIncidentCoordinates } from '../lib/incidents';
+import type { Incident, Language } from '../types/incidents';
 
 const DefaultIcon = L.icon({
   iconUrl: markerIcon,
@@ -58,14 +60,17 @@ function MapController({
 
 interface MapProps {
   incidents: Incident[];
+  language?: Language;
   selectedIncidentId?: string | null;
 }
 
-function Map({ incidents, selectedIncidentId = null }: MapProps) {
+function Map({ incidents, language = 'pt', selectedIncidentId = null }: MapProps) {
+  const navigate = useNavigate();
   const { userLocation } = useUserLocation();
   const initialCenter: [number, number] = [38.7223, -9.1393];
   const selectedIncident = incidents.find((incident) => incident.id === selectedIncidentId) ?? null;
   const selectedCoordinates = selectedIncident ? getIncidentCoordinates(selectedIncident) : null;
+  const copy = translations[language];
 
   return (
     <div className="map-shell h-full w-full">
@@ -87,9 +92,9 @@ function Map({ incidents, selectedIncidentId = null }: MapProps) {
           <Marker key="user-location" position={userLocation} icon={UserIcon}>
             <Popup>
               <div className="text-center">
-                <strong>Voce esta aqui</strong>
+                <strong>{copy.userHere}</strong>
                 <br />
-                <span className="text-sm text-gray-600">Localizacao atual</span>
+                <span className="text-sm text-gray-600">{copy.currentLocation}</span>
               </div>
             </Popup>
           </Marker>
@@ -106,6 +111,9 @@ function Map({ incidents, selectedIncidentId = null }: MapProps) {
               key={`incident-${incident.id}`}
               position={coordinates}
               icon={DefaultIcon}
+              eventHandlers={{
+                click: () => navigate(`/${incident.id}`),
+              }}
             >
             </Marker>
           );

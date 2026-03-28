@@ -5,6 +5,7 @@ import React from 'react';
 import { useIncidents } from '../hooks/useIncidents';
 import { useUserLocation } from '../hooks/useUserLocation';
 import { inferDistrictFromCoordinates, inferIncidentDistrict, normalizeText } from '../lib/districts';
+import { getPriorityLabel, translations } from '../lib/i18n';
 import {
   buildIncidentRouteUrl,
   calculateDistanceKm,
@@ -16,12 +17,13 @@ import type { RootOutletContext } from '../types/incidents';
 
 function NearbyPage() {
   const navigate = useNavigate();
-  const { searchQuery, selectedDistricts } = useOutletContext<RootOutletContext>();
+  const { language, searchQuery, selectedDistricts } = useOutletContext<RootOutletContext>();
   const { incidents, loading, error, refresh } = useIncidents();
   const { userLocation, locationPermission } = useUserLocation();
   const currentDistrict = inferDistrictFromCoordinates(userLocation);
   const activeDistricts = selectedDistricts.length > 0 ? selectedDistricts : currentDistrict ? [currentDistrict] : [];
   const activeDistrictKeys = new Set(activeDistricts.map((district) => normalizeText(district)));
+  const copy = translations[language];
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -33,19 +35,6 @@ function NearbyPage() {
         return 'bg-cyan-100 text-cyan-700 border-cyan-200';
       default:
         return 'bg-gray-100 text-gray-600 border-gray-200';
-    }
-  };
-
-  const getPriorityLabel = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return 'Urgente';
-      case 'medium':
-        return 'Moderado';
-      case 'low':
-        return 'Baixa prioridade';
-      default:
-        return '';
     }
   };
 
@@ -95,25 +84,23 @@ function NearbyPage() {
     });
 
   return (
-    <div className="h-full w-full overflow-auto px-4 pb-10 pt-24">
+    <div className="h-full w-full overflow-auto px-4 pb-10 pt-28 md:pt-32">
       <div className="mx-auto max-w-6xl">
         <section className="mb-6 overflow-hidden rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,_rgba(15,23,42,0.97)_0%,_rgba(8,47,73,0.94)_52%,_rgba(6,95,70,0.9)_100%)] p-6 text-white shadow-[0_25px_80px_rgba(15,23,42,0.22)]">
           <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-100">
                 <Radar className="size-4" />
-                Vigilância local
+                {copy.localMonitoring}
               </div>
               <h1 className="max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
-                Ocorrências perto de si, organizadas por distância, urgência e contexto.
+                {copy.nearbyTitle}
               </h1>
-              <p className="mt-3 max-w-2xl text-sm text-slate-200 md:text-base">
-                Use esta vista para identificar rapidamente pedidos de apoio nas proximidades e abrir rotas imediatas para resposta.
-              </p>
+              <p className="mt-3 max-w-2xl text-sm text-slate-200 md:text-base">{copy.nearbyDescription}</p>
               <div className="mt-5 flex flex-wrap gap-3 text-sm">
-                <div className="rounded-full border border-white/15 bg-white/8 px-4 py-2">{enrichedIncidents.length} ocorrências monitorizadas</div>
+                <div className="rounded-full border border-white/15 bg-white/8 px-4 py-2">{copy.monitoredIncidents(enrichedIncidents.length)}</div>
                 <div className="rounded-full border border-white/15 bg-white/8 px-4 py-2">
-                  {enrichedIncidents.filter((item) => item.priority === 'high').length} com prioridade urgente
+                  {copy.urgentPriorityCount(enrichedIncidents.filter((item) => item.priority === 'high').length)}
                 </div>
               </div>
             </div>
@@ -125,10 +112,8 @@ function NearbyPage() {
           <div className="mb-6 flex items-start gap-3 rounded-3xl border border-amber-200 bg-amber-50/90 p-4 text-amber-900 shadow-sm">
             <AlertCircle className="mt-0.5 size-5 flex-shrink-0 text-amber-600" />
             <div>
-              <p className="font-semibold">Permissão de localização negada</p>
-              <p className="mt-1 text-sm text-amber-800">
-                Permita o acesso nas definições do navegador para recalcular automaticamente a distância até cada ocorrência.
-              </p>
+              <p className="font-semibold">{copy.locationDenied}</p>
+              <p className="mt-1 text-sm text-amber-800">{copy.locationDeniedDescription}</p>
             </div>
           </div>
         )}
@@ -138,12 +123,12 @@ function NearbyPage() {
             <div className="flex items-start gap-3">
               <AlertCircle className="mt-0.5 size-5 flex-shrink-0 text-red-600" />
               <div>
-                <p className="font-semibold">Erro ao carregar incidentes</p>
+                <p className="font-semibold">{copy.loadingIncidentsError}</p>
                 <p className="mt-1 text-sm text-red-800">{error}</p>
               </div>
             </div>
             <button onClick={() => void refresh()} className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-red-700">
-              Repetir
+              {copy.retry}
             </button>
           </div>
         )}
@@ -151,7 +136,7 @@ function NearbyPage() {
         <div className="grid gap-4">
           {loading && (
             <div className="rounded-[28px] border border-white/80 bg-white/80 p-5 text-sm text-slate-600 shadow-[0_18px_55px_rgba(15,23,42,0.08)]">
-              A carregar ocorrências reais a partir do backend...
+              {copy.loadingLiveIncidents}
             </div>
           )}
 
@@ -166,28 +151,28 @@ function NearbyPage() {
                     <div className="flex-1">
                       <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                         <ShieldAlert className="size-3.5" />
-                        Incidente #{incident.id.slice(0, 8)}
+                        {copy.incidentLabel(incident.id.slice(0, 8))}
                       </div>
                       <h3 className="text-xl font-semibold text-slate-900">{incident.title}</h3>
                       <p className="mt-1 text-sm text-slate-600">{incident.description}</p>
                     </div>
                     <span className={`ml-3 whitespace-nowrap rounded-full border px-3 py-1 text-xs font-medium ${getPriorityColor(priority)}`}>
-                      {getPriorityLabel(priority)}
+                      {getPriorityLabel(language, priority)}
                     </span>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
                     <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2">
                       <MapPin className="size-4 text-cyan-700" />
-                      <span>{incident.place ?? 'Localização por confirmar'}</span>
+                      <span>{incident.place ?? copy.unknownLocation}</span>
                     </div>
                     <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2">
                       <Clock3 className="size-4 text-slate-500" />
-                      <span>{formatRelativeTime(incident.created_at)}</span>
+                      <span>{formatRelativeTime(incident.created_at, language)}</span>
                     </div>
                     <div className="inline-flex items-center gap-2 rounded-full bg-cyan-50 px-3 py-2 text-cyan-700">
                       <Navigation className="size-4" />
-                      <span>{distance !== null ? `${distance.toFixed(1)} km de distância` : 'Distância indisponível'}</span>
+                      <span>{distance !== null ? copy.distanceAway(distance) : copy.unavailableDistance}</span>
                     </div>
                   </div>
                 </div>
@@ -197,7 +182,7 @@ function NearbyPage() {
                     onClick={() => navigate(`/${incident.id}`)}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50 lg:max-w-[220px]"
                   >
-                    Ver detalhes
+                    {copy.viewDetails}
                     <ArrowUpRight className="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </button>
                   {coordinates && (
@@ -208,7 +193,7 @@ function NearbyPage() {
                       className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_35px_rgba(15,23,42,0.24)] transition duration-200 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_22px_42px_rgba(15,23,42,0.32)] lg:max-w-[220px]"
                     >
                       <Navigation className="size-4" />
-                      Ver rota
+                      {copy.viewRoute}
                     </a>
                   )}
                 </div>
@@ -220,7 +205,7 @@ function NearbyPage() {
         {!loading && enrichedIncidents.length === 0 && (
           <div className="py-12 text-center">
             <AlertCircle className="mx-auto mb-3 size-12 text-slate-400" />
-            <p className="text-slate-600">Nenhuma ocorrência próxima neste momento.</p>
+            <p className="text-slate-600">{copy.noNearbyIncidents}</p>
           </div>
         )}
       </div>

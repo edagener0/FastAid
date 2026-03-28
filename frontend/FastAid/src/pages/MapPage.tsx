@@ -7,18 +7,20 @@ import { useIncidents } from '../hooks/useIncidents';
 import { useUserLocation } from '../hooks/useUserLocation';
 import { getIncidentCoordinates } from '../lib/incidents';
 import { inferDistrictFromCoordinates, inferIncidentDistrict, normalizeText } from '../lib/districts';
+import { translations } from '../lib/i18n';
 import type { RootOutletContext } from '../types/incidents';
 import IncidentMap from './Map.tsx';
 
 function MapPage() {
   const { incidents, loading, error, refresh } = useIncidents();
-  const { selectedDistricts, setSelectedDistricts } = useOutletContext<RootOutletContext>();
+  const { language, selectedDistricts, setSelectedDistricts } = useOutletContext<RootOutletContext>();
   const { userLocation, locationPermission } = useUserLocation();
   const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(null);
   const [isDistrictMenuOpen, setIsDistrictMenuOpen] = useState(false);
   const districtMenuRef = useRef<HTMLDivElement | null>(null);
   const currentDistrict = inferDistrictFromCoordinates(userLocation);
   const activeDistricts = selectedDistricts.length > 0 ? selectedDistricts : currentDistrict ? [currentDistrict] : [];
+  const copy = translations[language];
 
   const selectedDistrictKeys = useMemo(
     () => new Set(activeDistricts.map((district) => normalizeText(district))),
@@ -73,7 +75,7 @@ function MapPage() {
   return (
     <div className="relative h-full w-full">
       <div className="h-full w-full">
-        <IncidentMap incidents={incidentsWithCoordinates} selectedIncidentId={selectedIncidentId} />
+        <IncidentMap incidents={incidentsWithCoordinates} language={language} selectedIncidentId={selectedIncidentId} />
       </div>
 
       <div className="absolute bottom-[7.1rem] right-[0.9rem] z-[950]" ref={districtMenuRef}>
@@ -82,7 +84,7 @@ function MapPage() {
             type="button"
             onClick={() => setIsDistrictMenuOpen((current) => !current)}
             className="grid size-14 place-items-center rounded-2xl border border-white/80 bg-white/92 text-slate-800 shadow-[0_18px_45px_rgba(15,23,42,0.15)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white"
-            aria-label="Selecionar distritos"
+            aria-label={copy.districtFilterAria}
           >
             <MapPinned className="size-5 text-cyan-700" />
           </button>
@@ -98,17 +100,15 @@ function MapPage() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
-                    Incidentes por distrito
+                    {copy.districtPanelEyebrow}
                   </div>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Selecione um ou vários distritos para filtrar os incidentes no mapa.
-                  </p>
+                  <p className="mt-1 text-sm text-slate-600">{copy.districtPanelDescription}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsDistrictMenuOpen(false)}
                   className="grid size-9 place-items-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200 hover:text-slate-800"
-                  aria-label="Fechar painel de distritos"
+                  aria-label={copy.districtPanelCloseAria}
                 >
                   <X className="size-4" />
                 </button>
@@ -122,7 +122,7 @@ function MapPage() {
                     viewBox="0 0 104 265"
                     className="h-full w-full"
                     role="img"
-                    aria-label="Mapa de Portugal continental por distrito"
+                    aria-label={copy.portugalDistrictMapAria}
                   >
                     <defs>
                       <filter id="district-map-shadow" x="-20%" y="-10%" width="140%" height="140%">
@@ -140,7 +140,7 @@ function MapPage() {
                             d={district.path}
                             role="button"
                             tabIndex={0}
-                            aria-label={`Filtrar incidentes por ${district.name}`}
+                            aria-label={copy.districtFilterAriaLabel(district.name)}
                             aria-pressed={isSelected}
                             onMouseDown={(event) => event.preventDefault()}
                             onClick={() => toggleDistrict(district.name)}
@@ -168,17 +168,14 @@ function MapPage() {
               </div>
 
               <div className="mt-4 flex items-center justify-between gap-3">
-                <p className="text-xs text-slate-500">
-                  {incidentsWithCoordinates.length} incidente{incidentsWithCoordinates.length === 1 ? '' : 's'} visível
-                  {activeDistricts.length > 0 ? activeDistricts.length === 1 ? ' nesse distrito.' : 's nesses distritos.' : ' em Portugal continental.'}
-                </p>
+                <p className="text-xs text-slate-500">{copy.visibleIncidents(incidentsWithCoordinates.length, activeDistricts.length)}</p>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={selectAllDistricts}
                     className="rounded-full bg-cyan-50 px-3 py-2 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100"
                   >
-                    Selecionar tudo
+                    {copy.selectAll}
                   </button>
                   <button
                     type="button"
@@ -188,15 +185,15 @@ function MapPage() {
                     }}
                     className="rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-200"
                   >
-                    Limpar
+                    {copy.clear}
                   </button>
                 </div>
               </div>
               {locationPermission === 'granted' && currentDistrict && (
                 <p className="mt-3 text-xs font-medium text-cyan-700">
                   {selectedDistricts.length > 0
-                    ? `A sua localização está em ${currentDistrict}, mas o mapa está a usar os distritos que selecionou.`
-                    : `A mostrar automaticamente apenas o distrito onde se encontra: ${currentDistrict}.`}
+                    ? copy.locationUsesSelection(currentDistrict)
+                    : copy.locationAutoDistrict(currentDistrict)}
                 </p>
               )}
             </div>
@@ -208,7 +205,7 @@ function MapPage() {
       <div className="absolute inset-x-4 bottom-4 z-[900] mx-auto max-w-6xl">
         {loading && (
           <div className="rounded-[28px] border border-white/80 bg-white/82 px-5 py-4 text-sm text-slate-700 shadow-[0_18px_45px_rgba(15,23,42,0.12)] backdrop-blur-xl">
-            A carregar incidentes...
+            {copy.loadingIncidents}
           </div>
         )}
 
@@ -220,7 +217,7 @@ function MapPage() {
                 {error}
               </span>
               <button onClick={() => void refresh()} className="font-semibold text-red-700">
-                Tentar novamente
+                {copy.retry}
               </button>
             </div>
           </div>

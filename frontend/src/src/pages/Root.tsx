@@ -38,7 +38,7 @@ function Root() {
             <button
               onClick={() => navigate('/perto-de-si')}
               className={`rounded-full px-4 py-2 text-sm transition ${
-                isNearbyPage ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/30' : 'text-slate-600 hover:bg-slate-100'
+                isNearbyPage ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/30'
               }`}
             >
               Perto de si

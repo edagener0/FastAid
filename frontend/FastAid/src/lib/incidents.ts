@@ -1,4 +1,6 @@
 import type { Incident } from '../types/incidents';
+import type { Language } from '../types/incidents';
+import { translations } from './i18n';
 
 const DEFAULT_API_BASE_URL = '/api';
 const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
@@ -8,7 +10,7 @@ async function request<T>(path: string): Promise<T> {
   const response = await fetch(`${apiBaseUrl}${path}`);
 
   if (!response.ok) {
-    throw new Error(`Pedido falhou com o estado ${response.status}.`);
+    throw new Error(translations.pt.apiError(response.status));
   }
 
   return response.json() as Promise<T>;
@@ -35,37 +37,39 @@ export function buildIncidentRouteUrl(coordinates: [number, number]): string {
   return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
 }
 
-export function formatRelativeTime(dateInput: string): string {
+export function formatRelativeTime(dateInput: string, language: Language = 'pt'): string {
+  const copy = translations[language];
   const date = new Date(dateInput);
   const diffMs = Date.now() - date.getTime();
 
   if (Number.isNaN(date.getTime())) {
-    return 'Agora mesmo';
+    return copy.rightNow;
   }
 
   const diffMinutes = Math.max(1, Math.floor(diffMs / 60000));
 
   if (diffMinutes < 60) {
-    return `há ${diffMinutes} min`;
+    return copy.minutesAgo(diffMinutes);
   }
 
   const diffHours = Math.floor(diffMinutes / 60);
   if (diffHours < 24) {
-    return diffHours === 1 ? 'há 1 h' : `há ${diffHours} h`;
+    return diffHours === 1 ? copy.oneHourAgo : copy.hoursAgo(diffHours);
   }
 
   const diffDays = Math.floor(diffHours / 24);
-  return diffDays === 1 ? 'há 1 dia' : `há ${diffDays} dias`;
+  return diffDays === 1 ? copy.oneDayAgo : copy.daysAgo(diffDays);
 }
 
-export function formatAbsoluteDate(dateInput: string): string {
+export function formatAbsoluteDate(dateInput: string, language: Language = 'pt'): string {
+  const copy = translations[language];
   const date = new Date(dateInput);
 
   if (Number.isNaN(date.getTime())) {
-    return 'Data indisponivel';
+    return copy.unavailableDate;
   }
 
-  return new Intl.DateTimeFormat('pt-PT', {
+  return new Intl.DateTimeFormat(language === 'pt' ? 'pt-PT' : 'en-GB', {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(date);

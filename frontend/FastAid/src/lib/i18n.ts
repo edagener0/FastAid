@@ -1,0 +1,169 @@
+import type { Language } from '../types/incidents';
+
+export const languageLabels: Record<Language, string> = {
+  pt: 'PT',
+  en: 'EN',
+};
+
+export const translations = {
+  pt: {
+    navMap: 'Mapa',
+    navNearby: 'Perto de si',
+    districtFilterAria: 'Selecionar distritos',
+    districtPanelCloseAria: 'Fechar painel de distritos',
+    districtPanelEyebrow: 'Incidentes por distrito',
+    districtPanelDescription: 'Selecione um ou vários distritos para filtrar os incidentes no mapa.',
+    portugalDistrictMapAria: 'Mapa de Portugal continental por distrito',
+    districtFilterAriaLabel: (district: string) => `Filtrar incidentes por ${district}`,
+    visibleIncidents: (count: number, districtCount: number) =>
+      `${count} incidente${count === 1 ? '' : 's'} visível${count === 1 ? '' : 's'}${
+        districtCount > 0 ? (districtCount === 1 ? ' nesse distrito.' : ' nesses distritos.') : ' em Portugal continental.'
+      }`,
+    selectAll: 'Selecionar tudo',
+    clear: 'Limpar',
+    locationUsesSelection: (district: string) =>
+      `A sua localização está em ${district}, mas o mapa está a usar os distritos que selecionou.`,
+    locationAutoDistrict: (district: string) =>
+      `A mostrar automaticamente apenas o distrito onde se encontra: ${district}.`,
+    loadingIncidents: 'A carregar incidentes...',
+    retry: 'Tentar novamente',
+    localMonitoring: 'Vigilância local',
+    nearbyTitle: 'Ocorrências perto de si, organizadas por distância, urgência e contexto.',
+    nearbyDescription:
+      'Use esta vista para identificar rapidamente pedidos de apoio nas proximidades e abrir rotas imediatas para resposta.',
+    monitoredIncidents: (count: number) => `${count} ocorrências monitorizadas`,
+    urgentPriorityCount: (count: number) => `${count} com prioridade urgente`,
+    locationDenied: 'Permissão de localização negada',
+    locationDeniedDescription:
+      'Permita o acesso nas definições do navegador para recalcular automaticamente a distância até cada ocorrência.',
+    loadingIncidentsError: 'Erro ao carregar incidentes',
+    loadingLiveIncidents: 'A carregar ocorrências reais a partir do backend...',
+    incidentLabel: (id: string) => `Incidente #${id}`,
+    unknownLocation: 'Localização por confirmar',
+    unavailableDistance: 'Distância indisponível',
+    distanceAway: (distance: number) => `${distance.toFixed(1)} km de distância`,
+    viewDetails: 'Ver detalhes',
+    viewRoute: 'Ver rota',
+    noNearbyIncidents: 'Nenhuma ocorrência próxima neste momento.',
+    priorityHigh: 'Urgente',
+    priorityMedium: 'Moderado',
+    priorityLow: 'Baixa prioridade',
+    back: 'Voltar',
+    incidentLoadFallback: 'Não foi possível carregar o incidente.',
+    loadingIncidentDetails: 'A carregar os detalhes do incidente...',
+    openIncidentError: 'Erro ao abrir o incidente',
+    statusLabel: 'Estado',
+    registeredAt: 'Registado',
+    contact: 'Contacto',
+    unavailable: 'Indisponível',
+    place: 'Local',
+    operationalReport: 'Relatório operacional',
+    openExternalRoute: 'Abrir rota externa',
+    incidentMap: 'Mapa do incidente',
+    receivedTranscript: 'Transcrição recebida',
+    noTranscript: 'Sem transcrição disponível.',
+    userHere: 'Você está aqui',
+    currentLocation: 'Localização atual',
+    apiError: (status: number) => `Pedido falhou com o estado ${status}.`,
+    rightNow: 'Agora mesmo',
+    minutesAgo: (minutes: number) => `há ${minutes} min`,
+    oneHourAgo: 'há 1 h',
+    hoursAgo: (hours: number) => `há ${hours} h`,
+    oneDayAgo: 'há 1 dia',
+    daysAgo: (days: number) => `há ${days} dias`,
+    unavailableDate: 'Data indisponível',
+    incidentStatus: {
+      aberto: 'aberto',
+      fechado: 'fechado',
+    },
+  },
+  en: {
+    navMap: 'Map',
+    navNearby: 'Nearby',
+    districtFilterAria: 'Select districts',
+    districtPanelCloseAria: 'Close district panel',
+    districtPanelEyebrow: 'Incidents by district',
+    districtPanelDescription: 'Select one or more districts to filter incidents on the map.',
+    portugalDistrictMapAria: 'District map of mainland Portugal',
+    districtFilterAriaLabel: (district: string) => `Filter incidents by ${district}`,
+    visibleIncidents: (count: number, districtCount: number) =>
+      `${count} visible incident${count === 1 ? '' : 's'}${
+        districtCount > 0 ? (districtCount === 1 ? ' in that district.' : ' in those districts.') : ' across mainland Portugal.'
+      }`,
+    selectAll: 'Select all',
+    clear: 'Clear',
+    locationUsesSelection: (district: string) =>
+      `Your location is in ${district}, but the map is using the districts you selected.`,
+    locationAutoDistrict: (district: string) => `Automatically showing only your current district: ${district}.`,
+    loadingIncidents: 'Loading incidents...',
+    retry: 'Try again',
+    localMonitoring: 'Local monitoring',
+    nearbyTitle: 'Incidents near you, organized by distance, urgency, and context.',
+    nearbyDescription:
+      'Use this view to quickly identify nearby support requests and open immediate routes for response.',
+    monitoredIncidents: (count: number) => `${count} monitored incidents`,
+    urgentPriorityCount: (count: number) => `${count} marked as urgent`,
+    locationDenied: 'Location permission denied',
+    locationDeniedDescription:
+      'Allow access in your browser settings to automatically recalculate the distance to each incident.',
+    loadingIncidentsError: 'Error loading incidents',
+    loadingLiveIncidents: 'Loading live incidents from the backend...',
+    incidentLabel: (id: string) => `Incident #${id}`,
+    unknownLocation: 'Location pending confirmation',
+    unavailableDistance: 'Distance unavailable',
+    distanceAway: (distance: number) => `${distance.toFixed(1)} km away`,
+    viewDetails: 'View details',
+    viewRoute: 'View route',
+    noNearbyIncidents: 'No nearby incidents right now.',
+    priorityHigh: 'Urgent',
+    priorityMedium: 'Moderate',
+    priorityLow: 'Low priority',
+    back: 'Back',
+    incidentLoadFallback: 'Could not load the incident.',
+    loadingIncidentDetails: 'Loading incident details...',
+    openIncidentError: 'Error opening incident',
+    statusLabel: 'Status',
+    registeredAt: 'Recorded',
+    contact: 'Contact',
+    unavailable: 'Unavailable',
+    place: 'Location',
+    operationalReport: 'Operational report',
+    openExternalRoute: 'Open external route',
+    incidentMap: 'Incident map',
+    receivedTranscript: 'Received transcript',
+    noTranscript: 'No transcript available.',
+    userHere: 'You are here',
+    currentLocation: 'Current location',
+    apiError: (status: number) => `Request failed with status ${status}.`,
+    rightNow: 'Just now',
+    minutesAgo: (minutes: number) => `${minutes} min ago`,
+    oneHourAgo: '1 h ago',
+    hoursAgo: (hours: number) => `${hours} h ago`,
+    oneDayAgo: '1 day ago',
+    daysAgo: (days: number) => `${days} days ago`,
+    unavailableDate: 'Date unavailable',
+    incidentStatus: {
+      aberto: 'open',
+      fechado: 'closed',
+    },
+  },
+} as const;
+
+export function getPriorityLabel(language: Language, priority: string): string {
+  const copy = translations[language];
+
+  switch (priority) {
+    case 'high':
+      return copy.priorityHigh;
+    case 'medium':
+      return copy.priorityMedium;
+    case 'low':
+      return copy.priorityLow;
+    default:
+      return '';
+  }
+}
+
+export function getIncidentStatusLabel(language: Language, status: 'aberto' | 'fechado'): string {
+  return translations[language].incidentStatus[status];
+}

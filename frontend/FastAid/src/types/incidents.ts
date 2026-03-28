@@ -1,5 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 
+export type Language = 'pt' | 'en';
+
 export interface Incident {
   id: string;
   title: string;
@@ -17,6 +19,7 @@ export interface Incident {
 
 export interface RootOutletContext {
   searchQuery: string;
+  language: Language;
   selectedDistricts: string[];
   setSelectedDistricts: Dispatch<SetStateAction<string[]>>;
 }
