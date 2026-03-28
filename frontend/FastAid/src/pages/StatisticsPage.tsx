@@ -7,7 +7,7 @@ import type { CountBucket, RootOutletContext } from '../types/incidents';
 
 function StatisticsPage() {
   const { language } = useOutletContext<RootOutletContext>();
-  const { statistics, loading, error, refresh } = useIncidentStatistics();
+  const { statistics, aiEnabled, aiInsights, aiLoading, aiError, loading, error, refresh } = useIncidentStatistics();
   const copy = translations[language];
 
   const topDistricts = statistics?.by_district.slice(0, 5) ?? [];
@@ -29,13 +29,13 @@ function StatisticsPage() {
               <p className="mt-3 max-w-3xl text-sm text-[#fff2e8] md:text-base">{copy.statisticsDescription}</p>
             </div>
 
-            {statistics?.ai_insights && (
+            {aiInsights && (
               <div className="rounded-[28px] border border-white/15 bg-white/10 p-5 backdrop-blur-sm">
                 <div className="inline-flex items-center gap-2 text-sm font-semibold text-[#fff6d7]">
                   <Sparkles className="size-4" />
                   {copy.aiExecutiveSummary}
                 </div>
-                <p className="mt-3 text-sm leading-7 text-[#fff8ea]">{statistics.ai_insights.executive_summary}</p>
+                <p className="mt-3 text-sm leading-7 text-[#fff8ea]">{aiInsights.executive_summary}</p>
               </div>
             )}
           </div>
@@ -64,6 +64,25 @@ function StatisticsPage() {
 
         {statistics && (
           <div className="grid gap-5">
+            {aiLoading && (
+              <div className="rounded-[28px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.88)] p-5 text-sm text-[#7d3f32] shadow-[0_18px_55px_rgba(105,11,8,0.08)]">
+                {copy.loadingAIReport}
+              </div>
+            )}
+
+            {!aiLoading && !aiEnabled && (
+              <div className="rounded-[28px] border border-amber-200 bg-[#fff2df] p-5 text-[#7a300d] shadow-sm">
+                <div className="inline-flex items-center gap-2 text-sm font-semibold">
+                  <AlertCircle className="size-4 text-[#c46a0d]" />
+                  {copy.aiUnavailableTitle}
+                </div>
+                <p className="mt-2 text-sm leading-6 text-[#9a4e1a]">
+                  {copy.aiUnavailableDescription}
+                  {aiError ? ` ${aiError}` : ''}
+                </p>
+              </div>
+            )}
+
             <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <StatisticCard icon={<Radar className="size-5 text-[#ab0000]" />} label={copy.totalIncidents} value={statistics.summary.total_incidents} />
               <StatisticCard icon={<ShieldAlert className="size-5 text-[#ab0000]" />} label={copy.openIncidents} value={statistics.summary.open_incidents} />
@@ -98,19 +117,30 @@ function StatisticsPage() {
               </Panel>
             </section>
 
-            {statistics.ai_insights && (
+            {aiInsights && (
               <section className="grid gap-5 lg:grid-cols-[1fr_1fr]">
+                <Panel title={copy.aiNetworkImpact}>
+                  <div className="rounded-2xl bg-[#fff1dc] px-4 py-4 text-sm leading-7 text-[#6b2a1e]">
+                    {aiInsights.network_impact_summary}
+                  </div>
+                </Panel>
+                <Panel title={copy.aiExecutiveActions}>
+                  <BulletList items={aiInsights.executive_actions} emptyLabel={copy.notAvailable} />
+                </Panel>
+                <Panel title={copy.aiPriorityDistricts}>
+                  <SimpleTagList items={aiInsights.priority_districts} emptyLabel={copy.notAvailable} />
+                </Panel>
                 <Panel title={copy.riskAlertsTitle}>
-                  <BulletList items={statistics.ai_insights.risk_alerts} emptyLabel={copy.notAvailable} />
+                  <BulletList items={aiInsights.risk_alerts} emptyLabel={copy.notAvailable} />
                 </Panel>
                 <Panel title={copy.operationalRecommendationsTitle}>
-                  <BulletList items={statistics.ai_insights.operational_recommendations} emptyLabel={copy.notAvailable} />
+                  <BulletList items={aiInsights.operational_recommendations} emptyLabel={copy.notAvailable} />
                 </Panel>
                 <Panel title={copy.emergingPatternsTitle}>
-                  <BulletList items={statistics.ai_insights.emerging_patterns} emptyLabel={copy.notAvailable} />
+                  <BulletList items={aiInsights.emerging_patterns} emptyLabel={copy.notAvailable} />
                 </Panel>
                 <Panel title={copy.dataQualityNotesTitle}>
-                  <BulletList items={statistics.ai_insights.data_quality_notes} emptyLabel={copy.notAvailable} />
+                  <BulletList items={aiInsights.data_quality_notes} emptyLabel={copy.notAvailable} />
                 </Panel>
               </section>
             )}
@@ -227,6 +257,22 @@ function BulletList({ items, emptyLabel }: { items: string[]; emptyLabel: string
           <span className="mt-2 size-2 shrink-0 rounded-full bg-[#ab0000]" />
           <span>{item}</span>
         </div>
+      ))}
+    </div>
+  );
+}
+
+function SimpleTagList({ items, emptyLabel }: { items: string[]; emptyLabel: string }) {
+  if (items.length === 0) {
+    return <p className="text-sm text-[#7d3f32]">{emptyLabel}</p>;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-3">
+      {items.map((item) => (
+        <span key={item} className="rounded-full bg-[#fff1dc] px-4 py-2 text-sm font-medium text-[#690b08]">
+          {item}
+        </span>
       ))}
     </div>
   );

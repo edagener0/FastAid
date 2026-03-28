@@ -1,7 +1,7 @@
 from db.session import SessionDep
 from .models import Incident
-from .services import build_incident_statistics, generate_statistics_ai_insights
-from .statistics import IncidentStatisticsResponse
+from .services import build_incident_statistics, build_statistics_ai_response
+from .statistics import IncidentStatisticsAIResponse, IncidentStatisticsResponse
 from typing import Annotated
 from fastapi import Query, HTTPException
 from sqlmodel import desc, select
@@ -35,20 +35,20 @@ def get_incident_statistics(
         .order_by(desc(Incident.created_at))
     ).all()
 
+    return build_incident_statistics(incidents)
+
+
+@router.get("/statistics/ai", response_model=IncidentStatisticsAIResponse)
+def get_incident_statistics_ai(
+    session: SessionDep,
+) -> IncidentStatisticsAIResponse:
+    incidents = session.exec(
+        select(Incident)
+        .order_by(desc(Incident.created_at))
+    ).all()
+
     statistics = build_incident_statistics(incidents)
-
-    try:
-        ai_insights = generate_statistics_ai_insights(statistics)
-    except Exception:
-        return statistics
-
-    return statistics.model_copy(
-        update={
-            "ai_enabled": True,
-            "ai_provider": "gemini-2.5-flash",
-            "ai_insights": ai_insights,
-        }
-    )
+    return build_statistics_ai_response(statistics)
 
 @router.get("/{incident_id}")
 def get_incident(

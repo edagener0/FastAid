@@ -1,6 +1,8 @@
 import json
 import re
 from collections import Counter
+from hashlib import sha1
+from threading import Lock
 from datetime import timezone, datetime, timedelta
 from google import genai
 from google.genai.chats import GenerateContentResponse
@@ -10,7 +12,7 @@ from core.config import settings
 
 from .messages import INCIDENT_STATISTICS_ANALYSIS_PROMPT, SMS_TO_SEND
 from .models import Incident, IncidentStatus
-from .statistics import AIStatisticsInsights, CountBucket, IncidentStatisticsResponse, IncidentStatisticsSummary, RecentIncidentSample
+from .statistics import AIStatisticsInsights, CountBucket, IncidentStatisticsAIResponse, IncidentStatisticsResponse, IncidentStatisticsSummary, RecentIncidentSample
 
 
 def get_gemini_client() -> genai.Client:
@@ -125,6 +127,9 @@ ROAD_KEYWORDS = (
 )
 
 WEEKDAY_LABELS = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+AI_STATISTICS_CACHE_TTL = timedelta(minutes=10)
+_ai_statistics_cache: dict[str, tuple[datetime, AIStatisticsInsights]] = {}
+_ai_statistics_cache_lock = Lock()
 
 
 def normalize_text(value: str | None) -> str:
@@ -311,9 +316,6 @@ def build_incident_statistics(incidents: list[Incident]) -> IncidentStatisticsRe
         by_district=by_district,
         by_hour=by_hour,
         by_weekday=by_weekday,
-        ai_enabled=False,
-        ai_provider=None,
-        ai_insights=None,
         recent_incident_samples=recent_samples,
     )
 
@@ -335,3 +337,67 @@ def generate_statistics_ai_insights(statistics: IncidentStatisticsResponse) -> A
     cleaned = clean_ai_response(response)
     parsed = raw_text_2_json(cleaned)
     return AIStatisticsInsights.model_validate(parsed)
+
+
+def build_statistics_cache_key(statistics: IncidentStatisticsResponse) -> str:
+    payload = {
+        "summary": statistics.summary.model_dump(),
+        "by_status": [bucket.model_dump() for bucket in statistics.by_status],
+        "by_district": [bucket.model_dump() for bucket in statistics.by_district[:10]],
+        "by_hour": [bucket.model_dump() for bucket in statistics.by_hour],
+        "by_weekday": [bucket.model_dump() for bucket in statistics.by_weekday],
+        "recent_incident_samples": [sample.model_dump() for sample in statistics.recent_incident_samples],
+    }
+    return sha1(json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
+
+
+def get_cached_statistics_ai_insights(cache_key: str) -> AIStatisticsInsights | None:
+    with _ai_statistics_cache_lock:
+        cached = _ai_statistics_cache.get(cache_key)
+        if not cached:
+            return None
+
+        cached_at, insights = cached
+        if datetime.now(timezone.utc) - cached_at > AI_STATISTICS_CACHE_TTL:
+            _ai_statistics_cache.pop(cache_key, None)
+            return None
+
+        return insights
+
+
+def cache_statistics_ai_insights(cache_key: str, insights: AIStatisticsInsights) -> None:
+    with _ai_statistics_cache_lock:
+        _ai_statistics_cache[cache_key] = (datetime.now(timezone.utc), insights)
+
+
+def build_statistics_ai_response(statistics: IncidentStatisticsResponse) -> IncidentStatisticsAIResponse:
+    cache_key = build_statistics_cache_key(statistics)
+    cached_insights = get_cached_statistics_ai_insights(cache_key)
+    if cached_insights is not None:
+        return IncidentStatisticsAIResponse(
+            generated_at=datetime.now(timezone.utc),
+            ai_enabled=True,
+            ai_provider="gemini-2.5-flash",
+            ai_insights=cached_insights,
+            ai_error=None,
+        )
+
+    try:
+        ai_insights = generate_statistics_ai_insights(statistics)
+    except Exception as error:
+        return IncidentStatisticsAIResponse(
+            generated_at=datetime.now(timezone.utc),
+            ai_enabled=False,
+            ai_provider=None,
+            ai_insights=None,
+            ai_error=str(error),
+        )
+
+    cache_statistics_ai_insights(cache_key, ai_insights)
+    return IncidentStatisticsAIResponse(
+        generated_at=datetime.now(timezone.utc),
+        ai_enabled=True,
+        ai_provider="gemini-2.5-flash",
+        ai_insights=ai_insights,
+        ai_error=None,
+    )

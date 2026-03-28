@@ -40,7 +40,10 @@ export interface IncidentStatisticsSummary {
 export interface AIStatisticsInsights {
   executive_summary: string;
   operational_pressure: 'low' | 'moderate' | 'high';
+  network_impact_summary: string;
+  priority_districts: string[];
   risk_alerts: string[];
+  executive_actions: string[];
   operational_recommendations: string[];
   emerging_patterns: string[];
   data_quality_notes: string[];
@@ -53,9 +56,14 @@ export interface IncidentStatisticsResponse {
   by_district: CountBucket[];
   by_hour: CountBucket[];
   by_weekday: CountBucket[];
+}
+
+export interface IncidentStatisticsAIResponse {
+  generated_at: string;
   ai_enabled: boolean;
   ai_provider: string | null;
   ai_insights: AIStatisticsInsights | null;
+  ai_error: string | null;
 }
 
 export interface RootOutletContext {

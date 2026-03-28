@@ -37,7 +37,10 @@ class RecentIncidentSample(BaseModel):
 class AIStatisticsInsights(BaseModel):
     executive_summary: str
     operational_pressure: Literal["low", "moderate", "high"]
+    network_impact_summary: str
+    priority_districts: list[str] = Field(default_factory=list)
     risk_alerts: list[str] = Field(default_factory=list)
+    executive_actions: list[str] = Field(default_factory=list)
     operational_recommendations: list[str] = Field(default_factory=list)
     emerging_patterns: list[str] = Field(default_factory=list)
     data_quality_notes: list[str] = Field(default_factory=list)
@@ -50,7 +53,12 @@ class IncidentStatisticsResponse(BaseModel):
     by_district: list[CountBucket]
     by_hour: list[CountBucket]
     by_weekday: list[CountBucket]
+    recent_incident_samples: list[RecentIncidentSample] = Field(default_factory=list, exclude=True)
+
+
+class IncidentStatisticsAIResponse(BaseModel):
+    generated_at: datetime
     ai_enabled: bool
     ai_provider: str | None = None
     ai_insights: AIStatisticsInsights | None = None
-    recent_incident_samples: list[RecentIncidentSample] = Field(default_factory=list, exclude=True)
+    ai_error: str | None = None
