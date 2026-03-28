@@ -1,7 +1,7 @@
 import json
 import re
 from collections import Counter
-from datetime import UTC, datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from google import genai
 from google.genai.chats import GenerateContentResponse
 from twilio.rest import Client
@@ -222,14 +222,14 @@ def is_urgent_incident(incident: Incident) -> bool:
 
     created_at = incident.created_at
     if created_at.tzinfo is None:
-        created_at = created_at.replace(tzinfo=UTC)
+        created_at = created_at.replace(tzinfo=timezone.utc)
 
-    age = datetime.now(UTC) - created_at
+    age = datetime.now(timezone.utc) - created_at
     return age <= timedelta(hours=4)
 
 
 def build_incident_statistics(incidents: list[Incident]) -> IncidentStatisticsResponse:
-    now = datetime.now(UTC)
+    now = datetime.now(timezone.utc)
     district_counts: Counter[str] = Counter()
     status_counts: Counter[str] = Counter()
     hour_counts: Counter[int] = Counter()
@@ -246,7 +246,7 @@ def build_incident_statistics(incidents: list[Incident]) -> IncidentStatisticsRe
     for incident in incidents:
         created_at = incident.created_at
         if created_at.tzinfo is None:
-            created_at = created_at.replace(tzinfo=UTC)
+            created_at = created_at.replace(tzinfo=timezone.utc)
 
         district = infer_incident_district(incident)
         if district:
