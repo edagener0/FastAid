@@ -1,11 +1,9 @@
-import { Search, ShieldPlus } from 'lucide-react';
-import { useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { ShieldPlus } from 'lucide-react';
+import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 
 function Root() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchQuery, setSearchQuery] = useState('');
   const isNearbyPage = location.pathname === '/perto-de-si';
   const isMapPage = location.pathname === '/';
 
@@ -19,7 +17,7 @@ function Root() {
               className="flex items-center gap-3 rounded-2xl px-2 py-1 text-center transition hover:bg-slate-100 md:text-left"
             >
               <span className="grid size-10 place-items-center rounded-2xl bg-slate-950 text-white shadow-lg shadow-cyan-500/20">
-                <ShieldPlus className="size-5" />
+                <img src="/fastaid.svg" alt="icon" className="size-10" />
               </span>
               <span>
                 <span className="block text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">FastAid</span>
@@ -47,8 +45,7 @@ function Root() {
           </div>
         </div>
       </nav>
-
-      <Outlet context={{ searchQuery }} />
+      <Outlet context={{ searchQuery: '' }} />
     </div>
   );
 }
