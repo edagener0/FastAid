@@ -26,7 +26,7 @@ Rules:
 * If the transcription does not clearly specify a location that can be mapped to coordinates, set "lat" and "lon" to null.
 * If you infer a location, use realistic coordinates for that location.
 * Report must be very detailed and be coordinate all responsible authorities while providing all the important information from the transcription. Like roads to take, alternative roads...
-* Always try to infer a place, latitude and longitude for the given text.
+* Always provide a place, latitude and longitude for the given text.
 Transcription: {transcription}
 
 """
