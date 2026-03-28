@@ -2,43 +2,48 @@
 
 :root {
   --font-size: 16px;
-  --background: #ffffff;
+  --background: #fff8ea;
   --foreground: oklch(0.145 0 0);
-  --card: #ffffff;
+  --card: #fffdf7;
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #030213;
+  --primary: #690b08;
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.95 0.0058 264.53);
-  --secondary-foreground: #030213;
-  --muted: #ececf0;
-  --muted-foreground: #717182;
-  --accent: #e9ebef;
-  --accent-foreground: #030213;
+  --secondary: #fde9c8;
+  --secondary-foreground: #690b08;
+  --muted: #f6e6d9;
+  --muted-foreground: #7a5a4d;
+  --accent: #fdd604;
+  --accent-foreground: #690b08;
   --destructive: #d4183d;
   --destructive-foreground: #ffffff;
-  --border: rgba(0, 0, 0, 0.1);
+  --border: rgba(129, 28, 22, 0.14);
   --input: transparent;
-  --input-background: #f3f3f5;
-  --switch-background: #cbced4;
+  --input-background: #fff3e3;
+  --switch-background: #f1c574;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --ring: #ab0000;
+  --chart-1: #ab0000;
+  --chart-2: #fdd604;
+  --chart-3: #690b08;
+  --chart-4: #f97316;
+  --chart-5: #fbbf24;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
+  --sidebar: #fff6e7;
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: #030213;
+  --sidebar-primary: #690b08;
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-accent: #fde9c8;
+  --sidebar-accent-foreground: #690b08;
+  --sidebar-border: rgba(129, 28, 22, 0.14);
+  --sidebar-ring: #ab0000;
+  --brand-red-deep: #690b08;
+  --brand-red: #ab0000;
+  --brand-gold: #fdd604;
+  --brand-cream: #fff8ea;
+  --brand-peach: #f6e6d9;
 }
 
 .dark {
@@ -126,6 +131,10 @@
 
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at top, rgba(253, 214, 4, 0.18), transparent 28%),
+      radial-gradient(circle at 18% 16%, rgba(171, 0, 0, 0.14), transparent 24%),
+      linear-gradient(180deg, #fff8ea 0%, #fff1dc 100%);
   }
 
   /**

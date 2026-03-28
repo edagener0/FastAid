@@ -7,7 +7,6 @@ import { useUserLocation } from '../hooks/useUserLocation';
 import { inferDistrictFromCoordinates, inferIncidentDistrict, normalizeText } from '../lib/districts';
 import { getPriorityLabel, translations } from '../lib/i18n';
 import {
-  buildIncidentRouteUrl,
   calculateDistanceKm,
   formatRelativeTime,
   getIncidentCoordinates,
@@ -86,17 +85,17 @@ function NearbyPage() {
   return (
     <div className="h-full w-full overflow-auto px-4 pb-10 pt-28 md:pt-32">
       <div className="mx-auto max-w-6xl">
-        <section className="mb-6 overflow-hidden rounded-[32px] border border-white/70 bg-[linear-gradient(135deg,_rgba(15,23,42,0.97)_0%,_rgba(8,47,73,0.94)_52%,_rgba(6,95,70,0.9)_100%)] p-6 text-white shadow-[0_25px_80px_rgba(15,23,42,0.22)]">
+        <section className="mb-6 overflow-hidden rounded-[32px] border border-[#f5d6b6] bg-[linear-gradient(145deg,_rgba(105,11,8,0.92)_0%,_rgba(129,28,22,0.88)_44%,_rgba(196,106,13,0.82)_100%)] p-6 text-white shadow-[0_26px_80px_rgba(105,11,8,0.2)]">
           <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-100">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#f3c989] bg-[rgba(255,248,234,0.14)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[#fff8ea] shadow-[0_8px_24px_rgba(105,11,8,0.12)]">
                 <Radar className="size-4" />
                 {copy.localMonitoring}
               </div>
               <h1 className="max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
                 {copy.nearbyTitle}
               </h1>
-              <p className="mt-3 max-w-2xl text-sm text-slate-200 md:text-base">{copy.nearbyDescription}</p>
+              <p className="mt-3 max-w-2xl text-sm text-[#fff2e8] md:text-base">{copy.nearbyDescription}</p>
               <div className="mt-5 flex flex-wrap gap-3 text-sm">
                 <div className="rounded-full border border-white/15 bg-white/8 px-4 py-2">{copy.monitoredIncidents(enrichedIncidents.length)}</div>
                 <div className="rounded-full border border-white/15 bg-white/8 px-4 py-2">
@@ -109,11 +108,11 @@ function NearbyPage() {
 
 
         {locationPermission === 'denied' && (
-          <div className="mb-6 flex items-start gap-3 rounded-3xl border border-amber-200 bg-amber-50/90 p-4 text-amber-900 shadow-sm">
-            <AlertCircle className="mt-0.5 size-5 flex-shrink-0 text-amber-600" />
+          <div className="mb-6 flex items-start gap-3 rounded-3xl border border-[#f5d6b6] bg-[#fff2df] p-4 text-[#7a300d] shadow-sm">
+            <AlertCircle className="mt-0.5 size-5 flex-shrink-0 text-[#c46a0d]" />
             <div>
               <p className="font-semibold">{copy.locationDenied}</p>
-              <p className="mt-1 text-sm text-amber-800">{copy.locationDeniedDescription}</p>
+              <p className="mt-1 text-sm text-[#9a4e1a]">{copy.locationDeniedDescription}</p>
             </div>
           </div>
         )}
@@ -135,7 +134,7 @@ function NearbyPage() {
 
         <div className="grid gap-4">
           {loading && (
-            <div className="rounded-[28px] border border-white/80 bg-white/80 p-5 text-sm text-slate-600 shadow-[0_18px_55px_rgba(15,23,42,0.08)]">
+            <div className="rounded-[28px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.88)] p-5 text-sm text-[#7d3f32] shadow-[0_18px_55px_rgba(105,11,8,0.08)]">
               {copy.loadingLiveIncidents}
             </div>
           )}
@@ -143,34 +142,34 @@ function NearbyPage() {
           {enrichedIncidents.map(({ incident, coordinates, distance, priority }) => (
             <div
               key={incident.id}
-              className="group overflow-hidden rounded-[28px] border border-white/80 bg-white/80 shadow-[0_18px_55px_rgba(15,23,42,0.08)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_70px_rgba(14,116,144,0.14)]"
+              className="group overflow-hidden rounded-[28px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.88)] shadow-[0_18px_55px_rgba(105,11,8,0.08)] backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_70px_rgba(171,0,0,0.14)]"
             >
               <div className="grid gap-4 p-5 lg:grid-cols-[1fr_auto] lg:items-center">
                 <div>
                   <div className="mb-3 flex items-start justify-between gap-3">
                     <div className="flex-1">
-                      <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                      <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-[#fff1dc] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#9b5c47]">
                         <ShieldAlert className="size-3.5" />
                         {copy.incidentLabel(incident.id.slice(0, 8))}
                       </div>
-                      <h3 className="text-xl font-semibold text-slate-900">{incident.title}</h3>
-                      <p className="mt-1 text-sm text-slate-600">{incident.description}</p>
+                      <h3 className="text-xl font-semibold text-[#5c1b16]">{incident.title}</h3>
+                      <p className="mt-1 text-sm text-[#7d3f32]">{incident.description}</p>
                     </div>
                     <span className={`ml-3 whitespace-nowrap rounded-full border px-3 py-1 text-xs font-medium ${getPriorityColor(priority)}`}>
                       {getPriorityLabel(language, priority)}
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2">
-                      <MapPin className="size-4 text-cyan-700" />
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-[#7d3f32]">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-[#fff1dc] px-3 py-2">
+                      <MapPin className="size-4 text-[#ab0000]" />
                       <span>{incident.place ?? copy.unknownLocation}</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2">
-                      <Clock3 className="size-4 text-slate-500" />
+                    <div className="inline-flex items-center gap-2 rounded-full bg-[#fff1dc] px-3 py-2">
+                      <Clock3 className="size-4 text-[#9b5c47]" />
                       <span>{formatRelativeTime(incident.created_at, language)}</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 rounded-full bg-cyan-50 px-3 py-2 text-cyan-700">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-[#fdd604]/20 px-3 py-2 text-[#8a320c]">
                       <Navigation className="size-4" />
                       <span>{distance !== null ? copy.distanceAway(distance) : copy.unavailableDistance}</span>
                     </div>
@@ -180,22 +179,11 @@ function NearbyPage() {
                 <div className="flex flex-col gap-2 lg:min-w-52 lg:justify-end">
                   <button
                     onClick={() => navigate(`/${incident.id}`)}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50 lg:max-w-[220px]"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-[#e7b77d] bg-[linear-gradient(180deg,_#fffaf0_0%,_#ffe9cf_100%)] px-5 py-3 text-sm font-semibold text-[#690b08] shadow-[0_14px_30px_rgba(171,0,0,0.12)] transition duration-200 hover:-translate-y-0.5 hover:border-[#d89a52] hover:bg-[linear-gradient(180deg,_#fff6e6_0%,_#ffdfba_100%)] hover:shadow-[0_20px_38px_rgba(171,0,0,0.16)] lg:max-w-[220px]"
                   >
                     {copy.viewDetails}
                     <ArrowUpRight className="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </button>
-                  {coordinates && (
-                    <a
-                      href={buildIncidentRouteUrl(coordinates)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_35px_rgba(15,23,42,0.24)] transition duration-200 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_22px_42px_rgba(15,23,42,0.32)] lg:max-w-[220px]"
-                    >
-                      <Navigation className="size-4" />
-                      {copy.viewRoute}
-                    </a>
-                  )}
                 </div>
               </div>
             </div>

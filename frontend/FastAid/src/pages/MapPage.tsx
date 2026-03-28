@@ -83,31 +83,31 @@ function MapPage() {
           <button
             type="button"
             onClick={() => setIsDistrictMenuOpen((current) => !current)}
-            className="grid size-14 place-items-center rounded-2xl border border-white/80 bg-white/92 text-slate-800 shadow-[0_18px_45px_rgba(15,23,42,0.15)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white"
+            className="grid size-14 place-items-center rounded-2xl border border-[#f0d0b6] bg-[rgba(255,251,244,0.95)] text-[#690b08] shadow-[0_18px_45px_rgba(105,11,8,0.14)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white"
             aria-label={copy.districtFilterAria}
           >
-            <MapPinned className="size-5 text-cyan-700" />
+            <MapPinned className="size-5 text-[#ab0000]" />
           </button>
 
           <div
-            className={`absolute bottom-[calc(100%+0.75rem)] right-0 w-[20rem] overflow-hidden rounded-[26px] border border-white/90 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.18)] transition-all duration-300 ${
+            className={`absolute bottom-[calc(100%+0.75rem)] right-0 w-[20rem] overflow-hidden rounded-[26px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.98)] shadow-[0_24px_70px_rgba(105,11,8,0.16)] transition-all duration-300 ${
               isDistrictMenuOpen
                 ? 'pointer-events-auto translate-y-0 opacity-100'
                 : 'pointer-events-none translate-y-8 opacity-0'
             }`}
           >
-            <div className="border-b border-slate-200/80 px-5 py-4">
+            <div className="border-b border-[#f2dfcf] px-5 py-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
+                  <div className="text-xs font-semibold uppercase tracking-[0.24em] text-[#b07c57]">
                     {copy.districtPanelEyebrow}
                   </div>
-                  <p className="mt-1 text-sm text-slate-600">{copy.districtPanelDescription}</p>
+                  <p className="mt-1 text-sm text-[#7d3f32]">{copy.districtPanelDescription}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsDistrictMenuOpen(false)}
-                  className="grid size-9 place-items-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200 hover:text-slate-800"
+                  className="grid size-9 place-items-center rounded-full bg-[#fff1dc] text-[#7d3f32] transition hover:bg-[#fde9c8] hover:text-[#690b08]"
                   aria-label={copy.districtPanelCloseAria}
                 >
                   <X className="size-4" />
@@ -116,7 +116,7 @@ function MapPage() {
             </div>
 
             <div className="px-4 py-4">
-              <div className="rounded-[22px] border border-slate-200 bg-white p-3">
+              <div className="rounded-[22px] border border-[#f2dfcf] bg-white p-3">
                 <div className="mx-auto aspect-[760/1180] w-full max-w-[13rem]">
                   <svg
                     viewBox="0 0 104 265"
@@ -151,9 +151,9 @@ function MapPage() {
                               }
                             }}
                             className="cursor-pointer transition-colors duration-200"
-                            fill={isSelected ? '#bfdbfe' : '#ffffff'}
+                            fill={isSelected ? '#fde9c8' : '#ffffff'}
                             fillOpacity={1}
-                            stroke={isSelected ? '#2563eb' : '#3f3f46'}
+                            stroke={isSelected ? '#ab0000' : '#5c1b16'}
                             strokeWidth={isSelected ? 5 : 3.2}
                             strokeLinejoin="round"
                             pointerEvents="all"
@@ -168,12 +168,12 @@ function MapPage() {
               </div>
 
               <div className="mt-4 flex items-center justify-between gap-3">
-                <p className="text-xs text-slate-500">{copy.visibleIncidents(incidentsWithCoordinates.length, activeDistricts.length)}</p>
+                <p className="text-xs text-[#8d5f50]">{copy.visibleIncidents(incidentsWithCoordinates.length, activeDistricts.length)}</p>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={selectAllDistricts}
-                    className="rounded-full bg-cyan-50 px-3 py-2 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100"
+                    className="rounded-full bg-[#fdd604] px-3 py-2 text-xs font-semibold text-[#690b08] transition hover:bg-[#facc15]"
                   >
                     {copy.selectAll}
                   </button>
@@ -183,14 +183,14 @@ function MapPage() {
                       setSelectedDistricts([]);
                       setSelectedIncidentId(null);
                     }}
-                    className="rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-200"
+                    className="rounded-full bg-[#f6e6d9] px-3 py-2 text-xs font-semibold text-[#7d3f32] transition hover:bg-[#efd6c5]"
                   >
                     {copy.clear}
                   </button>
                 </div>
               </div>
               {locationPermission === 'granted' && currentDistrict && (
-                <p className="mt-3 text-xs font-medium text-cyan-700">
+                <p className="mt-3 text-xs font-medium text-[#ab0000]">
                   {selectedDistricts.length > 0
                     ? copy.locationUsesSelection(currentDistrict)
                     : copy.locationAutoDistrict(currentDistrict)}
@@ -204,7 +204,7 @@ function MapPage() {
 
       <div className="absolute inset-x-4 bottom-4 z-[900] mx-auto max-w-6xl">
         {loading && (
-          <div className="rounded-[28px] border border-white/80 bg-white/82 px-5 py-4 text-sm text-slate-700 shadow-[0_18px_45px_rgba(15,23,42,0.12)] backdrop-blur-xl">
+          <div className="rounded-[28px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.9)] px-5 py-4 text-sm text-[#6b2a1e] shadow-[0_18px_45px_rgba(105,11,8,0.1)] backdrop-blur-xl">
             {copy.loadingIncidents}
           </div>
         )}

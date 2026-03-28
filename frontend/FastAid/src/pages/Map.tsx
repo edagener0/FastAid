@@ -30,6 +30,11 @@ const UserIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
+const worldBounds = L.latLngBounds(
+  L.latLng(-85, -180),
+  L.latLng(85, 180),
+);
+
 function MapController({
   userCenter,
   selectedCenter,
@@ -77,13 +82,18 @@ function Map({ incidents, language = 'pt', selectedIncidentId = null }: MapProps
       <MapContainer
         center={initialCenter}
         zoom={13}
+        minZoom={3}
         zoomControl={false}
         attributionControl={false}
+        maxBounds={worldBounds}
+        maxBoundsViscosity={1}
+        worldCopyJump={false}
         className="h-full w-full"
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          noWrap
         />
         <ZoomControl position="bottomright" />
         <MapController userCenter={userLocation} selectedCenter={selectedCoordinates} />
