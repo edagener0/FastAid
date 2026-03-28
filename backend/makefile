@@ -6,3 +6,6 @@ run-tunnel:
 
 run-prod:
 	cd src && fastapi run
+
+install:
+	pip install -r requirements.txt
