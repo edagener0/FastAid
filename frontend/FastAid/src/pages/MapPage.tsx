@@ -1,4 +1,4 @@
-import { AlertCircle, MapPinned, X } from 'lucide-react';
+import { MapPinned, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ import type { RootOutletContext } from '../types/incidents';
 import IncidentMap from './Map.tsx';
 
 function MapPage() {
-  const { incidents, loading, error, refresh } = useIncidents();
+  const { incidents, loading } = useIncidents();
   const { language, selectedDistricts, setSelectedDistricts } = useOutletContext<RootOutletContext>();
   const { userLocation, locationPermission } = useUserLocation();
   const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(null);
@@ -206,20 +206,6 @@ function MapPage() {
         {loading && (
           <div className="rounded-[28px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.9)] px-5 py-4 text-sm text-[#6b2a1e] shadow-[0_18px_45px_rgba(105,11,8,0.1)] backdrop-blur-xl">
             {copy.loadingIncidents}
-          </div>
-        )}
-
-        {error && (
-          <div className="rounded-[28px] border border-red-200 bg-red-50/95 px-5 py-4 text-sm text-red-800 shadow-[0_18px_45px_rgba(127,29,29,0.08)] backdrop-blur-xl">
-            <div className="flex items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-2">
-                <AlertCircle className="size-4" />
-                {error}
-              </span>
-              <button onClick={() => void refresh()} className="font-semibold text-red-700">
-                {copy.retry}
-              </button>
-            </div>
           </div>
         )}
       </div>

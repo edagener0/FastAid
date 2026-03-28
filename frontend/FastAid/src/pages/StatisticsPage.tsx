@@ -2,13 +2,15 @@ import { AlertCircle, BarChart3, Clock3, MapPinned, Radar, ShieldAlert, Sparkles
 import { useOutletContext } from 'react-router-dom';
 
 import { useIncidentStatistics } from '../hooks/useIncidentStatistics';
-import { translations } from '../lib/i18n';
+import { translateRequestError, translations } from '../lib/i18n';
 import type { CountBucket, RootOutletContext } from '../types/incidents';
 
 function StatisticsPage() {
   const { language } = useOutletContext<RootOutletContext>();
   const { statistics, aiEnabled, aiInsights, aiLoading, aiError, loading, error, refresh } = useIncidentStatistics();
   const copy = translations[language];
+  const localizedError = error ? translateRequestError(language, error) : null;
+  const localizedAiError = aiError ? translateRequestError(language, aiError) : null;
 
   const topDistricts = statistics?.by_district.slice(0, 5) ?? [];
   const peakHours = [...(statistics?.by_hour ?? [])]
@@ -47,13 +49,13 @@ function StatisticsPage() {
           </div>
         )}
 
-        {error && (
+        {localizedError && (
           <div className="mb-6 flex items-start justify-between gap-3 rounded-3xl border border-red-200 bg-red-50/90 p-4 text-red-900 shadow-sm">
             <div className="flex items-start gap-3">
               <AlertCircle className="mt-0.5 size-5 flex-shrink-0 text-red-600" />
               <div>
                 <p className="font-semibold">{copy.statisticsLoadError}</p>
-                <p className="mt-1 text-sm text-red-800">{error}</p>
+                <p className="mt-1 text-sm text-red-800">{localizedError}</p>
               </div>
             </div>
             <button onClick={() => void refresh()} className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-red-700">
@@ -78,7 +80,7 @@ function StatisticsPage() {
                 </div>
                 <p className="mt-2 text-sm leading-6 text-[#9a4e1a]">
                   {copy.aiUnavailableDescription}
-                  {aiError ? ` ${aiError}` : ''}
+                  {localizedAiError ? ` ${localizedAiError}` : ''}
                 </p>
               </div>
             )}

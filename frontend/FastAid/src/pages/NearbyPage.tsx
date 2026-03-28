@@ -5,7 +5,7 @@ import React from 'react';
 import { useIncidents } from '../hooks/useIncidents';
 import { useUserLocation } from '../hooks/useUserLocation';
 import { inferDistrictFromCoordinates, inferIncidentDistrict, normalizeText } from '../lib/districts';
-import { getPriorityLabel, translations } from '../lib/i18n';
+import { getPriorityLabel, translateRequestError, translations } from '../lib/i18n';
 import {
   calculateDistanceKm,
   formatRelativeTime,
@@ -23,6 +23,7 @@ function NearbyPage() {
   const activeDistricts = selectedDistricts.length > 0 ? selectedDistricts : currentDistrict ? [currentDistrict] : [];
   const activeDistrictKeys = new Set(activeDistricts.map((district) => normalizeText(district)));
   const copy = translations[language];
+  const localizedError = error ? translateRequestError(language, error) : null;
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -117,13 +118,13 @@ function NearbyPage() {
           </div>
         )}
 
-        {error && (
+        {localizedError && (
           <div className="mb-6 flex items-start justify-between gap-3 rounded-3xl border border-red-200 bg-red-50/90 p-4 text-red-900 shadow-sm">
             <div className="flex items-start gap-3">
               <AlertCircle className="mt-0.5 size-5 flex-shrink-0 text-red-600" />
               <div>
                 <p className="font-semibold">{copy.loadingIncidentsError}</p>
-                <p className="mt-1 text-sm text-red-800">{error}</p>
+                <p className="mt-1 text-sm text-red-800">{localizedError}</p>
               </div>
             </div>
             <button onClick={() => void refresh()} className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-red-700">

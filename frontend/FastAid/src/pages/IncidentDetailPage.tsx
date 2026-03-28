@@ -2,7 +2,7 @@ import { AlertCircle, ArrowLeft, Clock3, MapPin, Navigation, Phone, ScrollText }
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 
-import { getIncidentStatusLabel, translations } from '../lib/i18n';
+import { getIncidentStatusLabel, translateRequestError, translations } from '../lib/i18n';
 import { buildIncidentRouteUrl, fetchIncident, formatAbsoluteDate, getIncidentCoordinates } from '../lib/incidents';
 import type { Incident, RootOutletContext } from '../types/incidents';
 import Map from './Map';
@@ -15,6 +15,7 @@ function IncidentDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const copy = translations[language];
+  const localizedError = error ? translateRequestError(language, error) : null;
 
   useEffect(() => {
     const loadIncident = async () => {
@@ -52,13 +53,13 @@ function IncidentDetailPage() {
           </div>
         )}
 
-        {error && (
+        {localizedError && (
           <div className="rounded-[30px] border border-red-200 bg-red-50/90 p-6 text-red-900 shadow-[0_18px_55px_rgba(127,29,29,0.08)]">
             <div className="inline-flex items-center gap-2 font-semibold">
               <AlertCircle className="size-5 text-red-600" />
               {copy.openIncidentError}
             </div>
-            <p className="mt-2 text-sm text-red-800">{error}</p>
+            <p className="mt-2 text-sm text-red-800">{localizedError}</p>
           </div>
         )}
 

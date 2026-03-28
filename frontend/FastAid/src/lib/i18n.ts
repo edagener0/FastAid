@@ -243,3 +243,19 @@ export function getPriorityLabel(language: Language, priority: string): string {
 export function getIncidentStatusLabel(language: Language, status: 'aberto' | 'fechado'): string {
   return translations[language].incidentStatus[status];
 }
+
+export function translateRequestError(language: Language, message: string): string {
+  const localizedApiErrorPatterns = [
+    /pedido falhou com o estado\s+(\d+)\.?/i,
+    /request failed with status\s+(\d+)\.?/i,
+  ];
+
+  for (const pattern of localizedApiErrorPatterns) {
+    const match = message.match(pattern);
+    if (match) {
+      return translations[language].apiError(Number(match[1]));
+    }
+  }
+
+  return message;
+}
