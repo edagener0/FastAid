@@ -7,13 +7,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from calls.routes import router as router_calls
 from core.config import settings
-from db.utils import create_db_and_tables
 from incidents.routes import router as router_incidents
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_db_and_tables()
     yield
 
 

@@ -4,12 +4,15 @@ from typing import Annotated
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
-
 class Settings(BaseSettings):
     app_name: str = "FastAid API"
-    database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/fastaid"
     frontend_base_url: str = "http://localhost:5173"
     cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5173", "http://localhost:4173"]
+    database_url: str | None = None
+    database_host : str | None = None
+    postgres_user: str | None = None
+    postgres_password: str | None = None
+    postgres_db: str | None = None
     gemini_api_key: str | None = None
     twilio_account_sid: str | None = None
     twilio_auth_token: str | None = None
@@ -20,6 +23,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        case_sensitive=False,
     )
 
     @field_validator("cors_origins", mode="before")
@@ -29,10 +33,8 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in value.split(",") if origin.strip()]
         return value
 
-
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-
 
 settings = get_settings()

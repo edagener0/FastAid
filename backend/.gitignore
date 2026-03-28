@@ -2,4 +2,5 @@
 *.pyc
 *.svg
 *.env
+*.env.prod
 *.DS_Store
