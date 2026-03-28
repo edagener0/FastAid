@@ -1,5 +1,5 @@
 import json
-
+import re
 from google import genai
 from google.genai.chats import GenerateContentResponse
 from twilio.rest import Client
@@ -12,16 +12,16 @@ from .messages import SMS_TO_SEND
 def get_gemini_client() -> genai.Client:
     if not settings.gemini_api_key:
         raise RuntimeError("GEMINI_API_KEY is not configured.")
-
+    
     return genai.Client(api_key=settings.gemini_api_key)
 
 
 def generate_ai_response(prompt: str) -> GenerateContentResponse:
-    response = get_gemini_client().models.generate_content(
+    client = get_gemini_client()
+    response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt
     )
-
     return response
 
 def clean_ai_response(response: GenerateContentResponse) -> str:
@@ -32,8 +32,10 @@ def clean_ai_response(response: GenerateContentResponse) -> str:
     
     return raw_text
 
+
 def raw_text_2_json(raw_text: str) -> dict:
-    return json.loads(raw_text)
+    cleaned_text = re.sub(r'[\x00-\x1F\x7F]', '', raw_text)
+    return json.loads(cleaned_text)
 
 def send_sms_message(number_to_send: str, details_link: str):
     if not all(

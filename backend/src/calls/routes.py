@@ -8,6 +8,7 @@ from incidents.models import Incident
 from incidents.services import clean_ai_response, generate_ai_response, raw_text_2_json, send_sms_message
 
 from .messages import INCIDENT_EXTRACTION_PROMPT, INITIAL_MESSAGE
+import requests
 
 router = APIRouter()
 
@@ -44,6 +45,7 @@ async def handle_transcription(request: Request, session: SessionDep):
         cleaned = clean_ai_response(ai_raw_response)
         extracted = raw_text_2_json(cleaned)
     except Exception as error:
+        print(error)
         raise HTTPException(status_code=502, detail="Unable to process call transcription.") from error
 
     title = extracted.get("title", "Incident")
@@ -75,5 +77,9 @@ async def handle_transcription(request: Request, session: SessionDep):
         phone,
         f"{settings.frontend_base_url.rstrip('/')}/{incident.id}",
     )
+
+    if settings.brisa_url:
+        response = requests.post(settings.brisa_url, json=extracted)
+        response.raise_for_status()
 
     return Response(str(response), media_type="application/xml")

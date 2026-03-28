@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     twilio_account_sid: str | None = None
     twilio_auth_token: str | None = None
     twilio_sender_number: str | None = None
+    brisa_url: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=".env",
