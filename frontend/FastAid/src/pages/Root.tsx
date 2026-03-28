@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { Phone } from 'lucide-react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 
 import { translations } from '../lib/i18n';
 import type { Language } from '../types/incidents';
+
+const emergencyPhone = import.meta.env.VITE_EMERGENCY_PHONE?.trim() || '+17657895548';
 
 function Root() {
   const navigate = useNavigate();
@@ -48,6 +51,22 @@ function Root() {
             >
               {copy.navNearby}
             </button>
+            <a
+              href={`tel:${emergencyPhone}`}
+              className="inline-flex items-center gap-3 rounded-[20px] border border-white/80 bg-white/88 px-3 py-2 text-left text-slate-700 shadow-[0_16px_35px_rgba(15,23,42,0.08)] backdrop-blur-xl transition hover:bg-white"
+              aria-label={`${copy.emergencyLine} ${emergencyPhone}`}
+            >
+              <span className="grid size-9 place-items-center rounded-full bg-cyan-50 text-cyan-700">
+                <Phone className="size-4" />
+              </span>
+              <span className="hidden sm:block">
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+                  {copy.emergencyLine}
+                </span>
+                <span className="block text-sm font-semibold text-slate-900">{emergencyPhone}</span>
+              </span>
+              <span className="text-sm font-semibold text-slate-900 sm:hidden">{emergencyPhone}</span>
+            </a>
           </div>
         </div>
       </nav>

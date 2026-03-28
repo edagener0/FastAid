@@ -9,6 +9,7 @@ export const translations = {
   pt: {
     navMap: 'Mapa',
     navNearby: 'Perto de si',
+    emergencyLine: 'Linha de emergência',
     districtFilterAria: 'Selecionar distritos',
     districtPanelCloseAria: 'Fechar painel de distritos',
     districtPanelEyebrow: 'Incidentes por distrito',
@@ -80,6 +81,7 @@ export const translations = {
   en: {
     navMap: 'Map',
     navNearby: 'Nearby',
+    emergencyLine: 'Emergency line',
     districtFilterAria: 'Select districts',
     districtPanelCloseAria: 'Close district panel',
     districtPanelEyebrow: 'Incidents by district',
