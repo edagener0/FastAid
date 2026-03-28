@@ -1,8 +1,10 @@
 import { AlertCircle, ArrowUpRight, Clock3, MapPin, Navigation, Radar, ShieldAlert } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import React from 'react';
 
 import { useIncidents } from '../hooks/useIncidents';
 import { useUserLocation } from '../hooks/useUserLocation';
+import { inferDistrictFromCoordinates, inferIncidentDistrict, normalizeText } from '../lib/districts';
 import {
   buildIncidentRouteUrl,
   calculateDistanceKm,
@@ -14,9 +16,12 @@ import type { RootOutletContext } from '../types/incidents';
 
 function NearbyPage() {
   const navigate = useNavigate();
-  const { searchQuery } = useOutletContext<RootOutletContext>();
+  const { searchQuery, selectedDistricts } = useOutletContext<RootOutletContext>();
   const { incidents, loading, error, refresh } = useIncidents();
   const { userLocation, locationPermission } = useUserLocation();
+  const currentDistrict = inferDistrictFromCoordinates(userLocation);
+  const activeDistricts = selectedDistricts.length > 0 ? selectedDistricts : currentDistrict ? [currentDistrict] : [];
+  const activeDistrictKeys = new Set(activeDistricts.map((district) => normalizeText(district)));
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -47,6 +52,12 @@ function NearbyPage() {
   const enrichedIncidents = incidents
     .filter((incident) => {
       const query = searchQuery.trim().toLowerCase();
+      const incidentDistrict = inferIncidentDistrict(incident);
+
+      if (activeDistrictKeys.size > 0 && (!incidentDistrict || !activeDistrictKeys.has(normalizeText(incidentDistrict)))) {
+        return false;
+      }
+
       if (!query) {
         return true;
       }
@@ -91,59 +102,32 @@ function NearbyPage() {
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-100">
                 <Radar className="size-4" />
-                Vigilancia local
+                Vigilância local
               </div>
               <h1 className="max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
-                Ocorrencias perto de si, organizadas por distancia, urgencia e contexto.
+                Ocorrências perto de si, organizadas por distância, urgência e contexto.
               </h1>
               <p className="mt-3 max-w-2xl text-sm text-slate-200 md:text-base">
                 Use esta vista para identificar rapidamente pedidos de apoio nas proximidades e abrir rotas imediatas para resposta.
               </p>
               <div className="mt-5 flex flex-wrap gap-3 text-sm">
-                <div className="rounded-full border border-white/15 bg-white/8 px-4 py-2">{enrichedIncidents.length} ocorrencias monitorizadas</div>
+                <div className="rounded-full border border-white/15 bg-white/8 px-4 py-2">{enrichedIncidents.length} ocorrências monitorizadas</div>
                 <div className="rounded-full border border-white/15 bg-white/8 px-4 py-2">
                   {enrichedIncidents.filter((item) => item.priority === 'high').length} com prioridade urgente
                 </div>
               </div>
             </div>
-
-            <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-              <div className="rounded-3xl bg-white/10 p-4 backdrop-blur-sm">
-                <p className="text-xs uppercase tracking-[0.22em] text-cyan-100">Estado</p>
-                <p className="mt-2 text-2xl font-semibold">Monitorizacao ativa</p>
-              </div>
-              <div className="rounded-3xl bg-white/10 p-4 backdrop-blur-sm">
-                <p className="text-xs uppercase tracking-[0.22em] text-cyan-100">Localizacao</p>
-                <p className="mt-2 text-sm text-slate-100">
-                  {userLocation ? `${userLocation[0].toFixed(3)}, ${userLocation[1].toFixed(3)}` : 'A aguardar permissao do navegador'}
-                </p>
-              </div>
-              <div className="rounded-3xl bg-white/10 p-4 backdrop-blur-sm">
-                <p className="text-xs uppercase tracking-[0.22em] text-cyan-100">Resposta</p>
-                <p className="mt-2 text-sm text-slate-100">Rotas externas prontas a abrir a partir de cada cartao.</p>
-              </div>
-            </div>
           </div>
         </section>
 
-        <div className="mb-6 flex items-center gap-2 text-slate-600">
-          <MapPin className="size-4" />
-          <p className="text-sm md:text-base">
-            {locationPermission === 'granted' ? (
-              <span>Mostrando ocorrencias proximas da sua localizacao atual.</span>
-            ) : (
-              <span className="text-amber-700">Ative a localizacao para ver resultados mais relevantes.</span>
-            )}
-          </p>
-        </div>
 
         {locationPermission === 'denied' && (
           <div className="mb-6 flex items-start gap-3 rounded-3xl border border-amber-200 bg-amber-50/90 p-4 text-amber-900 shadow-sm">
             <AlertCircle className="mt-0.5 size-5 flex-shrink-0 text-amber-600" />
             <div>
-              <p className="font-semibold">Permissao de localizacao negada</p>
+              <p className="font-semibold">Permissão de localização negada</p>
               <p className="mt-1 text-sm text-amber-800">
-                Permita o acesso nas definicoes do navegador para recalcular automaticamente a distancia ate cada ocorrencia.
+                Permita o acesso nas definições do navegador para recalcular automaticamente a distância até cada ocorrência.
               </p>
             </div>
           </div>
@@ -167,7 +151,7 @@ function NearbyPage() {
         <div className="grid gap-4">
           {loading && (
             <div className="rounded-[28px] border border-white/80 bg-white/80 p-5 text-sm text-slate-600 shadow-[0_18px_55px_rgba(15,23,42,0.08)]">
-              A carregar ocorrencias reais a partir do backend...
+              A carregar ocorrências reais a partir do backend...
             </div>
           )}
 
@@ -195,7 +179,7 @@ function NearbyPage() {
                   <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
                     <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2">
                       <MapPin className="size-4 text-cyan-700" />
-                      <span>{incident.place ?? 'Localizacao por confirmar'}</span>
+                      <span>{incident.place ?? 'Localização por confirmar'}</span>
                     </div>
                     <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2">
                       <Clock3 className="size-4 text-slate-500" />
@@ -203,7 +187,7 @@ function NearbyPage() {
                     </div>
                     <div className="inline-flex items-center gap-2 rounded-full bg-cyan-50 px-3 py-2 text-cyan-700">
                       <Navigation className="size-4" />
-                      <span>{distance !== null ? `${distance.toFixed(1)} km de distancia` : 'Distancia indisponivel'}</span>
+                      <span>{distance !== null ? `${distance.toFixed(1)} km de distância` : 'Distância indisponível'}</span>
                     </div>
                   </div>
                 </div>
@@ -236,7 +220,7 @@ function NearbyPage() {
         {!loading && enrichedIncidents.length === 0 && (
           <div className="py-12 text-center">
             <AlertCircle className="mx-auto mb-3 size-12 text-slate-400" />
-            <p className="text-slate-600">Nenhuma ocorrencia proxima neste momento.</p>
+            <p className="text-slate-600">Nenhuma ocorrência próxima neste momento.</p>
           </div>
         )}
       </div>

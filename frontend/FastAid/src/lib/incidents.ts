@@ -46,16 +46,16 @@ export function formatRelativeTime(dateInput: string): string {
   const diffMinutes = Math.max(1, Math.floor(diffMs / 60000));
 
   if (diffMinutes < 60) {
-    return `ha ${diffMinutes} min`;
+    return `há ${diffMinutes} min`;
   }
 
   const diffHours = Math.floor(diffMinutes / 60);
   if (diffHours < 24) {
-    return diffHours === 1 ? 'ha 1 h' : `ha ${diffHours} h`;
+    return diffHours === 1 ? 'há 1 h' : `há ${diffHours} h`;
   }
 
   const diffDays = Math.floor(diffHours / 24);
-  return diffDays === 1 ? 'ha 1 dia' : `ha ${diffDays} dias`;
+  return diffDays === 1 ? 'há 1 dia' : `há ${diffDays} dias`;
 }
 
 export function formatAbsoluteDate(dateInput: string): string {

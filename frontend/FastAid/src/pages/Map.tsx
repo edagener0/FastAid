@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -28,14 +28,30 @@ const UserIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-function MapController({ center }: { center: [number, number] | null }) {
+function MapController({
+  userCenter,
+  selectedCenter,
+}: {
+  userCenter: [number, number] | null;
+  selectedCenter: [number, number] | null;
+}) {
   const map = useMap();
+  const hasCenteredOnUser = useRef(false);
 
   useEffect(() => {
-    if (center) {
-      map.setView(center, 14, { animate: true });
+    if (selectedCenter) {
+      map.setView(selectedCenter, 14, { animate: true });
     }
-  }, [center, map]);
+  }, [selectedCenter, map]);
+
+  useEffect(() => {
+    if (!userCenter || hasCenteredOnUser.current || selectedCenter) {
+      return;
+    }
+
+    hasCenteredOnUser.current = true;
+    map.setView(userCenter, 14, { animate: false });
+  }, [userCenter, selectedCenter, map]);
 
   return null;
 }
@@ -65,7 +81,7 @@ function Map({ incidents, selectedIncidentId = null }: MapProps) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <ZoomControl position="bottomright" />
-        <MapController center={selectedCoordinates ?? userLocation} />
+        <MapController userCenter={userLocation} selectedCenter={selectedCoordinates} />
 
         {userLocation && (
           <Marker key="user-location" position={userLocation} icon={UserIcon}>

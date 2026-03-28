@@ -1,3 +1,5 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 export interface Incident {
   id: string;
   title: string;
@@ -15,4 +17,6 @@ export interface Incident {
 
 export interface RootOutletContext {
   searchQuery: string;
+  selectedDistricts: string[];
+  setSelectedDistricts: Dispatch<SetStateAction<string[]>>;
 }
