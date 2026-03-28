@@ -7,10 +7,10 @@ import type { Language } from '../types/incidents';
 function Root() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [language] = useState<Language>(() => (document.documentElement.lang.toLowerCase().startsWith('en') ? 'en' : 'pt'));
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
   const isNearbyPage = location.pathname === '/perto-de-si';
   const isMapPage = location.pathname === '/';
+  const language: Language = document.documentElement.lang.toLowerCase().startsWith('en') ? 'en' : 'pt';
   const copy = translations[language];
 
   return (
