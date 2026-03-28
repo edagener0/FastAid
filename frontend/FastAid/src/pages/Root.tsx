@@ -1,4 +1,3 @@
-import { ShieldPlus } from 'lucide-react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 
 function Root() {

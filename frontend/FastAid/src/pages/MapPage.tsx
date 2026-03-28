@@ -1,12 +1,11 @@
-import { AlertCircle, ArrowUpRight, Clock3, MapPin, RefreshCcw, Siren, Zap } from 'lucide-react';
+import { AlertCircle, Clock3 } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 
 import Map from './Map.tsx';
 
 import { useIncidents } from '../hooks/useIncidents';
 import { formatRelativeTime, getIncidentCoordinates } from '../lib/incidents';
-import type { RootOutletContext } from '../types/incidents';
 
 function MapPage() {
   const navigate = useNavigate();
