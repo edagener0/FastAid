@@ -16,6 +16,7 @@ function Root() {
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
   const isNearbyPage = location.pathname === '/perto-de-si';
   const isMapPage = location.pathname === '/';
+  const isStatisticsPage = location.pathname === '/statistics';
   const copy = translations[language];
 
   useEffect(() => {
@@ -81,6 +82,14 @@ function Root() {
               }`}
             >
               {copy.navNearby}
+            </button>
+            <button
+              onClick={() => navigate('/statistics')}
+              className={`rounded-full px-4 py-2 text-sm transition ${
+                isStatisticsPage ? 'bg-[#811c16] text-white shadow-lg shadow-[#811c16]/25' : 'text-[#7d3f32] hover:bg-[#fff1dc]'
+              }`}
+            >
+              {copy.navStatistics}
             </button>
             <a
               href={`tel:${emergencyPhone}`}

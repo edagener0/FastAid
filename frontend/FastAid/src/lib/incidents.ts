@@ -1,4 +1,4 @@
-import type { Incident } from '../types/incidents';
+import type { Incident, IncidentStatisticsResponse } from '../types/incidents';
 import type { Language } from '../types/incidents';
 import { translations } from './i18n';
 
@@ -22,6 +22,10 @@ export function fetchIncidents(limit = 100): Promise<Incident[]> {
 
 export function fetchIncident(incidentId: string): Promise<Incident> {
   return request<Incident>(`/incidents/${incidentId}`);
+}
+
+export function fetchIncidentStatistics(): Promise<IncidentStatisticsResponse> {
+  return request<IncidentStatisticsResponse>('/incidents/statistics');
 }
 
 export function getIncidentCoordinates(incident: Incident): [number, number] | null {
