@@ -2,7 +2,7 @@ import { AlertCircle, BarChart3, Clock3, MapPinned, Radar, ShieldAlert, Sparkles
 import { useOutletContext } from 'react-router-dom';
 
 import { useIncidentStatistics } from '../hooks/useIncidentStatistics';
-import { getIncidentStatusLabel, getLocalizedWeekdayLabel, translateRequestError, translations } from '../lib/i18n';
+import { getLocalizedWeekdayLabel, translateRequestError, translations } from '../lib/i18n';
 import type { CountBucket, RootOutletContext } from '../types/incidents';
 
 function StatisticsPage() {
@@ -11,22 +11,12 @@ function StatisticsPage() {
   const copy = translations[language];
   const localizedError = error ? translateRequestError(language, error) : null;
   const localizedAiError = aiError ? translateRequestError(language, aiError) : null;
-  const localizedStatusBuckets = (statistics?.by_status ?? []).map((bucket) => ({
-    ...bucket,
-    label:
-      bucket.label === 'aberto' || bucket.label === 'fechado'
-        ? getIncidentStatusLabel(language, bucket.label)
-        : bucket.label,
-  }));
   const localizedWeekdayBuckets = (statistics?.by_weekday ?? []).map((bucket) => ({
     ...bucket,
     label: getLocalizedWeekdayLabel(language, bucket.label),
   }));
 
   const topDistricts = statistics?.by_district.slice(0, 5) ?? [];
-  const peakHours = [...(statistics?.by_hour ?? [])]
-    .sort((left, right) => right.count - left.count)
-    .slice(0, 3);
 
   return (
     <div className="h-full w-full overflow-x-hidden overflow-y-auto px-3 pb-6 pt-3 max-[450px]:px-2 max-[450px]:pb-4 max-[450px]:pt-2.5 max-[400px]:px-1.5 max-[400px]:pb-3 max-[400px]:pt-2 max-[760px]:pb-4 max-[700px]:pb-3 sm:px-4 sm:pb-10 sm:pt-4 md:pt-6">
@@ -122,16 +112,6 @@ function StatisticsPage() {
               </Panel>
             </section>
 
-            <section className="grid gap-4 max-[450px]:gap-3 max-[700px]:gap-2.5 sm:gap-5 lg:grid-cols-[1fr_1fr]">
-              <Panel title={copy.statusDistribution}>
-                <DistributionList buckets={localizedStatusBuckets} />
-              </Panel>
-
-              <Panel title={copy.peakHoursTitle}>
-                <DistributionList buckets={peakHours} />
-              </Panel>
-            </section>
-
             {aiInsights && (
               <section className="grid gap-4 max-[450px]:gap-3 max-[700px]:gap-2.5 sm:gap-5 lg:grid-cols-[1fr_1fr]">
                 <Panel title={copy.aiNetworkImpact}>
@@ -154,7 +134,7 @@ function StatisticsPage() {
                 <Panel title={copy.emergingPatternsTitle}>
                   <BulletList items={aiInsights.emerging_patterns} emptyLabel={copy.notAvailable} />
                 </Panel>
-                <Panel title={copy.dataQualityNotesTitle}>
+                <Panel title={copy.dataQualityNotesTitle} className="lg:col-span-2">
                   <BulletList items={aiInsights.data_quality_notes} emptyLabel={copy.notAvailable} />
                 </Panel>
               </section>
@@ -208,9 +188,19 @@ function MiniMetric({ label, value }: { label: string; value: string | number })
   );
 }
 
-function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+function Panel({
+  title,
+  children,
+  className,
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="min-w-0 rounded-[24px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.9)] p-4 shadow-[0_18px_55px_rgba(105,11,8,0.08)] max-[760px]:rounded-[20px] max-[760px]:p-3 max-[700px]:rounded-[16px] max-[700px]:p-2.5 max-[520px]:rounded-[14px] max-[520px]:p-2.5 max-[450px]:rounded-[18px] max-[450px]:p-2.5 max-[400px]:rounded-[14px] max-[400px]:p-2 sm:rounded-[32px] sm:p-5">
+    <div
+      className={`min-w-0 rounded-[24px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.9)] p-4 shadow-[0_18px_55px_rgba(105,11,8,0.08)] max-[760px]:rounded-[20px] max-[760px]:p-3 max-[700px]:rounded-[16px] max-[700px]:p-2.5 max-[520px]:rounded-[14px] max-[520px]:p-2.5 max-[450px]:rounded-[18px] max-[450px]:p-2.5 max-[400px]:rounded-[14px] max-[400px]:p-2 sm:rounded-[32px] sm:p-5 ${className ?? ''}`}
+    >
       <div className="mb-3 break-words text-base font-semibold text-[#5c1b16] max-[450px]:mb-2 max-[450px]:text-sm max-[400px]:text-[13px] sm:mb-4 sm:text-lg">{title}</div>
       {children}
     </div>
