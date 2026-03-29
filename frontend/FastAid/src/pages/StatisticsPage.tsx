@@ -1,4 +1,4 @@
-import { AlertCircle, BarChart3, Clock3, MapPinned, Radar, ShieldAlert, Sparkles } from 'lucide-react';
+import { AlertCircle, BarChart3, Clock3, Radar, ShieldAlert, Sparkles } from 'lucide-react';
 import { useOutletContext } from 'react-router-dom';
 
 import { useIncidentStatistics } from '../hooks/useIncidentStatistics';
@@ -88,11 +88,10 @@ function StatisticsPage() {
               </div>
             )}
 
-            <section className="grid gap-3 max-[450px]:gap-2.5 max-[700px]:gap-2 sm:gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <section className="grid gap-3 max-[450px]:gap-2.5 max-[700px]:gap-2 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
               <StatisticCard icon={<Radar className="size-5 text-[#ab0000]" />} label={copy.totalIncidents} value={statistics.summary.total_incidents} />
               <StatisticCard icon={<ShieldAlert className="size-5 text-[#ab0000]" />} label={copy.openIncidents} value={statistics.summary.open_incidents} />
               <StatisticCard icon={<AlertCircle className="size-5 text-[#ab0000]" />} label={copy.urgentIncidents} value={statistics.summary.urgent_incidents} />
-              <StatisticCard icon={<MapPinned className="size-5 text-[#ab0000]" />} label={copy.topDistrict} value={statistics.summary.top_district ?? copy.notAvailableShort} caption={statistics.summary.top_district ? copy.topDistrictCount(statistics.summary.top_district_incidents) : undefined} />
             </section>
 
             <section className="grid gap-4 max-[450px]:gap-3 max-[700px]:gap-2.5 sm:gap-5 lg:grid-cols-[1.05fr_0.95fr]">
