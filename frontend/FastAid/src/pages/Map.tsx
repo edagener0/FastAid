@@ -63,15 +63,54 @@ function MapController({
   return null;
 }
 
+function InteractionController({ interactive }: { interactive: boolean }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (interactive) {
+      map.dragging.enable();
+      map.touchZoom.enable();
+      map.doubleClickZoom.enable();
+      map.scrollWheelZoom.enable();
+      map.boxZoom.enable();
+      map.keyboard.enable();
+      if ('tap' in map && map.tap) {
+        map.tap.enable();
+      }
+      return;
+    }
+
+    map.dragging.disable();
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+    map.boxZoom.disable();
+    map.keyboard.disable();
+    if ('tap' in map && map.tap) {
+      map.tap.disable();
+    }
+  }, [interactive, map]);
+
+  return null;
+}
+
 interface MapProps {
   incidents: Incident[];
   language?: Language;
   selectedIncidentId?: string | null;
+  showUserLocation?: boolean;
+  interactive?: boolean;
 }
 
-function Map({ incidents, language = 'pt', selectedIncidentId = null }: MapProps) {
+function Map({
+  incidents,
+  language = 'pt',
+  selectedIncidentId = null,
+  showUserLocation = true,
+  interactive = true,
+}: MapProps) {
   const navigate = useNavigate();
-  const { userLocation } = useUserLocation();
+  const { userLocation } = useUserLocation(showUserLocation);
   const initialCenter: [number, number] = [38.7223, -9.1393];
   const selectedIncident = incidents.find((incident) => incident.id === selectedIncidentId) ?? null;
   const selectedCoordinates = selectedIncident ? getIncidentCoordinates(selectedIncident) : null;
@@ -83,11 +122,20 @@ function Map({ incidents, language = 'pt', selectedIncidentId = null }: MapProps
         center={initialCenter}
         zoom={13}
         minZoom={3}
+        maxZoom={interactive ? undefined : 16}
         zoomControl={false}
         attributionControl={false}
         maxBounds={worldBounds}
         maxBoundsViscosity={1}
         worldCopyJump={false}
+        dragging={interactive}
+        scrollWheelZoom={interactive}
+        doubleClickZoom={interactive}
+        touchZoom={interactive}
+        boxZoom={interactive}
+        keyboard={interactive}
+        zoomAnimation={interactive}
+        markerZoomAnimation={interactive}
         className="h-full w-full"
       >
         <TileLayer
@@ -95,10 +143,11 @@ function Map({ incidents, language = 'pt', selectedIncidentId = null }: MapProps
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           noWrap
         />
-        <ZoomControl position="bottomright" />
-        <MapController userCenter={userLocation} selectedCenter={selectedCoordinates} />
+        {interactive && <ZoomControl position="bottomright" />}
+        <MapController userCenter={showUserLocation ? userLocation : null} selectedCenter={selectedCoordinates} />
+        <InteractionController interactive={interactive} />
 
-        {userLocation && (
+        {showUserLocation && userLocation && (
           <Marker key="user-location" position={userLocation} icon={UserIcon}>
             <Popup>
               <div className="text-center">
@@ -121,9 +170,7 @@ function Map({ incidents, language = 'pt', selectedIncidentId = null }: MapProps
               key={`incident-${incident.id}`}
               position={coordinates}
               icon={DefaultIcon}
-              eventHandlers={{
-                click: () => navigate(`/${incident.id}`),
-              }}
+              eventHandlers={interactive ? { click: () => navigate(`/${incident.id}`) } : undefined}
             >
             </Marker>
           );

@@ -64,7 +64,7 @@ function IncidentDetailPage() {
         )}
 
         {incident && (
-          <div className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="grid gap-5 lg:items-start lg:grid-cols-[1.05fr_0.95fr]">
             <section className="rounded-[32px] border border-[#f5d6b6] bg-[linear-gradient(145deg,_rgba(105,11,8,0.92)_0%,_rgba(129,28,22,0.88)_44%,_rgba(196,106,13,0.82)_100%)] p-6 text-white shadow-[0_26px_80px_rgba(105,11,8,0.2)]">
               <div className="inline-flex rounded-full border border-[#f3c989] bg-[rgba(255,248,234,0.14)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[#fff8ea] shadow-[0_8px_24px_rgba(105,11,8,0.12)]">
                 {copy.statusLabel} {getIncidentStatusLabel(language, incident.status)}
@@ -115,13 +115,19 @@ function IncidentDetailPage() {
               )}
             </section>
 
-            <section className="grid gap-5">
-              <div className="overflow-hidden rounded-[32px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.9)] shadow-[0_18px_55px_rgba(105,11,8,0.08)]">
-                <div className="border-b border-[#f2dfcf] px-5 py-4">
-                  <h2 className="text-lg font-semibold text-[#5c1b16]">{copy.incidentMap}</h2>
-                </div>
+            <section className="grid content-start gap-5">
+              <div className="relative overflow-hidden rounded-[32px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.9)] shadow-[0_18px_55px_rgba(105,11,8,0.08)]">
+                <h2 className="pointer-events-none absolute left-3 top-3 z-[500] rounded-full bg-[rgba(255,251,244,0.94)] px-3 py-1 text-sm font-semibold text-[#5c1b16] shadow-sm">
+                  {copy.incidentMap}
+                </h2>
                 <div className="h-[320px] sm:h-[420px]">
-                  <Map incidents={[incident]} selectedIncidentId={incident.id} language={language} />
+                  <Map
+                    incidents={[incident]}
+                    selectedIncidentId={incident.id}
+                    language={language}
+                    showUserLocation={false}
+                    interactive={false}
+                  />
                 </div>
               </div>
 

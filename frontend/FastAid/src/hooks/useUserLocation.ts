@@ -7,11 +7,17 @@ interface UseUserLocationResult {
   locationPermission: LocationPermissionState;
 }
 
-export function useUserLocation(): UseUserLocationResult {
+export function useUserLocation(enabled = true): UseUserLocationResult {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [locationPermission, setLocationPermission] = useState<LocationPermissionState>('prompt');
+  const [locationPermission, setLocationPermission] = useState<LocationPermissionState>(enabled ? 'prompt' : 'denied');
 
   useEffect(() => {
+    if (!enabled) {
+      setUserLocation(null);
+      setLocationPermission('denied');
+      return;
+    }
+
     if (!navigator.geolocation) {
       setLocationPermission('unsupported');
       return;
@@ -31,7 +37,7 @@ export function useUserLocation(): UseUserLocationResult {
         maximumAge: 60000,
       },
     );
-  }, []);
+  }, [enabled]);
 
   return { userLocation, locationPermission };
 }
