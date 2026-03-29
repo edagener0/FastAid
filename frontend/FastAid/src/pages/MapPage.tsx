@@ -1,5 +1,5 @@
 import { MapPinned, X } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import simplemapsDistricts from '../data/simplemapsDistricts.json';
@@ -13,7 +13,7 @@ import IncidentMap from './Map.tsx';
 
 function MapPage() {
   const { incidents, loading } = useIncidents();
-  const { language, selectedDistricts, setSelectedDistricts } = useOutletContext<RootOutletContext>();
+  const { language, selectedDistricts, setSelectedDistricts, contentOffset } = useOutletContext<RootOutletContext>();
   const { userLocation, locationPermission } = useUserLocation();
   const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(null);
   const [isDistrictMenuOpen, setIsDistrictMenuOpen] = useState(false);
@@ -71,30 +71,48 @@ function MapPage() {
   });
 
   const incidentsWithCoordinates = visibleIncidents.filter((incident) => getIncidentCoordinates(incident));
+  const pageStyle: CSSProperties = {
+    height: '100dvh',
+    minHeight: '100dvh',
+  };
 
   return (
-    <div className="relative h-full w-full">
-      <div className="h-full w-full">
+    <div
+      className={`relative h-full w-full ${isDistrictMenuOpen ? 'district-panel-open' : ''}`}
+      style={{ ...pageStyle, '--map-top-offset': `${contentOffset}px` } as CSSProperties}
+    >
+      <div
+        className="absolute inset-x-0 bottom-0"
+        style={{ top: `${contentOffset}px` }}
+      >
         <IncidentMap incidents={incidentsWithCoordinates} language={language} selectedIncidentId={selectedIncidentId} />
       </div>
 
-      <div className="absolute bottom-[7.1rem] right-[0.9rem] z-[950]" ref={districtMenuRef}>
+      <div
+        className="absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-3 z-[950] sm:bottom-[8.6rem] sm:right-[0.9rem]"
+        ref={districtMenuRef}
+      >
         <div className="relative">
           <button
             type="button"
             onClick={() => setIsDistrictMenuOpen((current) => !current)}
-            className="grid size-14 place-items-center rounded-2xl border border-[#f0d0b6] bg-[rgba(255,251,244,0.95)] text-[#690b08] shadow-[0_18px_45px_rgba(105,11,8,0.14)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white"
+            className="grid size-12 place-items-center rounded-2xl border border-[#f0d0b6] bg-[rgba(255,251,244,0.95)] text-[#690b08] shadow-[0_18px_45px_rgba(105,11,8,0.14)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white sm:size-14"
             aria-label={copy.districtFilterAria}
           >
             <MapPinned className="size-5 text-[#ab0000]" />
           </button>
 
           <div
-            className={`absolute bottom-[calc(100%+0.75rem)] right-0 w-[20rem] overflow-hidden rounded-[26px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.98)] shadow-[0_24px_70px_rgba(105,11,8,0.16)] transition-all duration-300 ${
+            className={`fixed right-3 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-[26px] border border-[#f0d0b6] bg-[rgba(255,251,244,0.98)] shadow-[0_24px_70px_rgba(105,11,8,0.16)] transition-all duration-300 sm:right-4 ${
               isDistrictMenuOpen
                 ? 'pointer-events-auto translate-y-0 opacity-100'
                 : 'pointer-events-none translate-y-8 opacity-0'
             }`}
+            style={{
+              top: `${contentOffset + 15}px`,
+              maxHeight: `calc(100vh - ${contentOffset + 30}px)`,
+              overflowY: 'auto',
+            }}
           >
             <div className="border-b border-[#f2dfcf] px-5 py-4">
               <div className="flex items-start justify-between gap-3">
@@ -167,9 +185,9 @@ function MapPage() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between gap-3">
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-xs text-[#8d5f50]">{copy.visibleIncidents(incidentsWithCoordinates.length, activeDistricts.length)}</p>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     onClick={selectAllDistricts}

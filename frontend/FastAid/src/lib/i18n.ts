@@ -67,6 +67,7 @@ export const translations = {
     statisticsDescription:
       'Acompanhe pressão operacional, distritos com maior atividade, picos temporais e recomendações geradas com apoio de IA.',
     aiExecutiveSummary: 'Resumo executivo com IA',
+    aiExecutiveSummaryFallback: 'Resumo executivo indisponível de momento. Consulte os painéis abaixo para a leitura operacional.',
     aiNetworkImpact: 'Impacto operacional na rede',
     aiExecutiveActions: 'Ações prioritárias para a Brisa',
     aiPriorityDistricts: 'Distritos prioritários por IA',
@@ -110,6 +111,7 @@ export const translations = {
     oneDayAgo: 'há 1 dia',
     daysAgo: (days: number) => `há ${days} dias`,
     unavailableDate: 'Data indisponível',
+    weekdaysShort: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
     incidentStatus: {
       aberto: 'aberto',
       fechado: 'fechado',
@@ -175,6 +177,7 @@ export const translations = {
     statisticsDescription:
       'Track operational pressure, districts with higher activity, temporal peaks, and AI-assisted recommendations.',
     aiExecutiveSummary: 'AI executive summary',
+    aiExecutiveSummaryFallback: 'Executive summary is currently unavailable. Use the panels below for operational insights.',
     aiNetworkImpact: 'Operational network impact',
     aiExecutiveActions: 'Priority actions for Brisa',
     aiPriorityDistricts: 'AI priority districts',
@@ -218,6 +221,7 @@ export const translations = {
     oneDayAgo: '1 day ago',
     daysAgo: (days: number) => `${days} days ago`,
     unavailableDate: 'Date unavailable',
+    weekdaysShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     incidentStatus: {
       aberto: 'open',
       fechado: 'closed',
@@ -242,6 +246,25 @@ export function getPriorityLabel(language: Language, priority: string): string {
 
 export function getIncidentStatusLabel(language: Language, status: 'aberto' | 'fechado'): string {
   return translations[language].incidentStatus[status];
+}
+
+const WEEKDAY_INDEX_BY_LABEL: Record<string, number> = {
+  Mon: 0,
+  Tue: 1,
+  Wed: 2,
+  Thu: 3,
+  Fri: 4,
+  Sat: 5,
+  Sun: 6,
+};
+
+export function getLocalizedWeekdayLabel(language: Language, label: string): string {
+  const weekdayIndex = WEEKDAY_INDEX_BY_LABEL[label];
+  if (weekdayIndex === undefined) {
+    return label;
+  }
+
+  return translations[language].weekdaysShort[weekdayIndex];
 }
 
 export function translateRequestError(language: Language, message: string): string {

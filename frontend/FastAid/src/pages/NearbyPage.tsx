@@ -84,7 +84,7 @@ function NearbyPage() {
     });
 
   return (
-    <div className="h-full w-full overflow-auto px-4 pb-10 pt-28 md:pt-32">
+    <div className="h-full w-full overflow-auto px-4 pb-10 pt-4 md:pt-6">
       <div className="mx-auto max-w-6xl">
         <section className="mb-6 overflow-hidden rounded-[32px] border border-[#f5d6b6] bg-[linear-gradient(145deg,_rgba(105,11,8,0.92)_0%,_rgba(129,28,22,0.88)_44%,_rgba(196,106,13,0.82)_100%)] p-6 text-white shadow-[0_26px_80px_rgba(105,11,8,0.2)]">
           <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
@@ -119,7 +119,7 @@ function NearbyPage() {
         )}
 
         {localizedError && (
-          <div className="mb-6 flex items-start justify-between gap-3 rounded-3xl border border-red-200 bg-red-50/90 p-4 text-red-900 shadow-sm">
+          <div className="mb-6 flex flex-col gap-3 rounded-3xl border border-red-200 bg-red-50/90 p-4 text-red-900 shadow-sm sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-3">
               <AlertCircle className="mt-0.5 size-5 flex-shrink-0 text-red-600" />
               <div>
@@ -147,7 +147,7 @@ function NearbyPage() {
             >
               <div className="grid gap-4 p-5 lg:grid-cols-[1fr_auto] lg:items-center">
                 <div>
-                  <div className="mb-3 flex items-start justify-between gap-3">
+                  <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex-1">
                       <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-[#fff1dc] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#9b5c47]">
                         <ShieldAlert className="size-3.5" />
@@ -156,7 +156,7 @@ function NearbyPage() {
                       <h3 className="text-xl font-semibold text-[#5c1b16]">{incident.title}</h3>
                       <p className="mt-1 text-sm text-[#7d3f32]">{incident.description}</p>
                     </div>
-                    <span className={`ml-3 whitespace-nowrap rounded-full border px-3 py-1 text-xs font-medium ${getPriorityColor(priority)}`}>
+                    <span className={`self-start whitespace-nowrap rounded-full border px-3 py-1 text-xs font-medium sm:ml-3 ${getPriorityColor(priority)}`}>
                       {getPriorityLabel(language, priority)}
                     </span>
                   </div>
@@ -180,7 +180,7 @@ function NearbyPage() {
                 <div className="flex flex-col gap-2 lg:min-w-52 lg:justify-end">
                   <button
                     onClick={() => navigate(`/${incident.id}`)}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-[#e7b77d] bg-[linear-gradient(180deg,_#fffaf0_0%,_#ffe9cf_100%)] px-5 py-3 text-sm font-semibold text-[#690b08] shadow-[0_14px_30px_rgba(171,0,0,0.12)] transition duration-200 hover:-translate-y-0.5 hover:border-[#d89a52] hover:bg-[linear-gradient(180deg,_#fff6e6_0%,_#ffdfba_100%)] hover:shadow-[0_20px_38px_rgba(171,0,0,0.16)] lg:max-w-[220px]"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-[#e7b77d] bg-[linear-gradient(180deg,_#fffaf0_0%,_#ffe9cf_100%)] px-5 py-3 text-sm font-semibold text-[#690b08] shadow-[0_14px_30px_rgba(171,0,0,0.12)] transition duration-200 hover:-translate-y-0.5 hover:border-[#d89a52] hover:bg-[linear-gradient(180deg,_#fff6e6_0%,_#ffdfba_100%)] hover:shadow-[0_20px_38px_rgba(171,0,0,0.16)] sm:w-auto lg:max-w-[220px]"
                   >
                     {copy.viewDetails}
                     <ArrowUpRight className="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

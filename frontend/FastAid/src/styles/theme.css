@@ -188,3 +188,67 @@
     line-height: 1.5;
   }
 }
+
+@media (max-height: 700px) {
+  .app-navbar {
+    top: 0.4rem;
+  }
+
+  .app-navbar-inner {
+    gap: 0.55rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .app-navbar-brand-row,
+  .app-navbar-brand,
+  .app-navbar-actions,
+  .app-navbar-links {
+    gap: 0.5rem;
+  }
+
+  .app-navbar-logo {
+    width: 4rem;
+    height: 3rem;
+  }
+
+  .app-navbar-title {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+  }
+
+  .app-navbar-phone {
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+  }
+
+  .app-navbar-lang-mobile,
+  .app-navbar-lang-desktop {
+    padding: 0.15rem;
+  }
+}
+
+@media (max-height: 620px) {
+  .app-navbar-inner {
+    gap: 0.45rem;
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+  }
+
+  .app-navbar-links button,
+  .app-navbar-lang-mobile button,
+  .app-navbar-lang-desktop button {
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+    font-size: 0.65rem !important;
+  }
+
+  .app-navbar-phone {
+    gap: 0.5rem;
+  }
+
+  .app-navbar-phone span:last-child,
+  .app-navbar-phone span span:last-child {
+    font-size: 0.7rem;
+  }
+}

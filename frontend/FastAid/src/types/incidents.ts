@@ -71,4 +71,5 @@ export interface RootOutletContext {
   language: Language;
   selectedDistricts: string[];
   setSelectedDistricts: Dispatch<SetStateAction<string[]>>;
+  contentOffset: number;
 }

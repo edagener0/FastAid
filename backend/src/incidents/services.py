@@ -130,6 +130,7 @@ WEEKDAY_LABELS = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 AI_STATISTICS_CACHE_TTL = timedelta(minutes=10)
 _ai_statistics_cache: dict[str, tuple[datetime, AIStatisticsInsights]] = {}
 _ai_statistics_cache_lock = Lock()
+SUPPORTED_STATISTICS_LANGUAGES = {"pt": "Portuguese", "en": "English"}
 
 
 def normalize_text(value: str | None) -> str:
@@ -320,7 +321,11 @@ def build_incident_statistics(incidents: list[Incident]) -> IncidentStatisticsRe
     )
 
 
-def generate_statistics_ai_insights(statistics: IncidentStatisticsResponse) -> AIStatisticsInsights:
+def generate_statistics_ai_insights(
+    statistics: IncidentStatisticsResponse,
+    language: str = "pt",
+) -> AIStatisticsInsights:
+    language_code = language if language in SUPPORTED_STATISTICS_LANGUAGES else "pt"
     payload = {
         "summary": statistics.summary.model_dump(),
         "by_status": [bucket.model_dump() for bucket in statistics.by_status],
@@ -330,17 +335,79 @@ def generate_statistics_ai_insights(statistics: IncidentStatisticsResponse) -> A
         "recent_incident_samples": [sample.model_dump() for sample in statistics.recent_incident_samples],
     }
     prompt = INCIDENT_STATISTICS_ANALYSIS_PROMPT.format(
+        language_name=SUPPORTED_STATISTICS_LANGUAGES[language_code],
         payload=json.dumps(payload, ensure_ascii=False, indent=2),
     )
 
     response = generate_ai_response(prompt)
     cleaned = clean_ai_response(response)
     parsed = raw_text_2_json(cleaned)
-    return AIStatisticsInsights.model_validate(parsed)
+    normalized = normalize_ai_statistics_payload(parsed)
+    return AIStatisticsInsights.model_validate(normalized)
 
 
-def build_statistics_cache_key(statistics: IncidentStatisticsResponse) -> str:
+def normalize_ai_statistics_payload(payload: dict) -> dict:
+    if not isinstance(payload, dict):
+        return payload
+
+    key_aliases = {
+        "executive_summary": ("executive_summary", "resumo_executivo", "resumo"),
+        "operational_pressure": ("operational_pressure", "pressao_operacional", "pressão_operacional"),
+        "network_impact_summary": ("network_impact_summary", "impacto_operacional_rede", "resumo_impacto_rede"),
+        "priority_districts": ("priority_districts", "distritos_prioritarios", "distritos_prioritários"),
+        "risk_alerts": ("risk_alerts", "alertas_risco"),
+        "executive_actions": ("executive_actions", "acoes_executivas", "ações_executivas", "acoes_prioritarias", "ações_prioritárias"),
+        "operational_recommendations": ("operational_recommendations", "recomendacoes_operacionais", "recomendações_operacionais"),
+        "emerging_patterns": ("emerging_patterns", "padroes_emergentes", "padrões_emergentes"),
+        "data_quality_notes": ("data_quality_notes", "notas_qualidade_dados"),
+    }
+
+    normalized: dict[str, object] = {}
+    for target_key, aliases in key_aliases.items():
+        for alias in aliases:
+            if alias in payload:
+                normalized[target_key] = payload[alias]
+                break
+
+    pressure_aliases = {
+        "baixa": "low",
+        "baixo": "low",
+        "low": "low",
+        "moderada": "moderate",
+        "moderado": "moderate",
+        "moderate": "moderate",
+        "alta": "high",
+        "alto": "high",
+        "high": "high",
+    }
+    pressure_raw = normalized.get("operational_pressure")
+    if isinstance(pressure_raw, str):
+        normalized["operational_pressure"] = pressure_aliases.get(pressure_raw.casefold(), pressure_raw.casefold())
+
+    list_fields = (
+        "priority_districts",
+        "risk_alerts",
+        "executive_actions",
+        "operational_recommendations",
+        "emerging_patterns",
+        "data_quality_notes",
+    )
+    for field in list_fields:
+        value = normalized.get(field)
+        if value is None:
+            continue
+        if isinstance(value, list):
+            normalized[field] = [str(item) for item in value]
+        else:
+            normalized[field] = [str(value)]
+
+    return normalized
+
+
+def build_statistics_cache_key(statistics: IncidentStatisticsResponse, language: str = "pt") -> str:
+    language_code = language if language in SUPPORTED_STATISTICS_LANGUAGES else "pt"
     payload = {
+        "language": language_code,
         "summary": statistics.summary.model_dump(),
         "by_status": [bucket.model_dump() for bucket in statistics.by_status],
         "by_district": [bucket.model_dump() for bucket in statistics.by_district[:10]],
@@ -370,8 +437,12 @@ def cache_statistics_ai_insights(cache_key: str, insights: AIStatisticsInsights)
         _ai_statistics_cache[cache_key] = (datetime.now(timezone.utc), insights)
 
 
-def build_statistics_ai_response(statistics: IncidentStatisticsResponse) -> IncidentStatisticsAIResponse:
-    cache_key = build_statistics_cache_key(statistics)
+def build_statistics_ai_response(
+    statistics: IncidentStatisticsResponse,
+    language: str = "pt",
+) -> IncidentStatisticsAIResponse:
+    language_code = language if language in SUPPORTED_STATISTICS_LANGUAGES else "pt"
+    cache_key = build_statistics_cache_key(statistics, language_code)
     cached_insights = get_cached_statistics_ai_insights(cache_key)
     if cached_insights is not None:
         return IncidentStatisticsAIResponse(
@@ -383,7 +454,7 @@ def build_statistics_ai_response(statistics: IncidentStatisticsResponse) -> Inci
         )
 
     try:
-        ai_insights = generate_statistics_ai_insights(statistics)
+        ai_insights = generate_statistics_ai_insights(statistics, language_code)
     except Exception as error:
         return IncidentStatisticsAIResponse(
             generated_at=datetime.now(timezone.utc),

@@ -37,11 +37,11 @@ function IncidentDetailPage() {
   const coordinates = incident ? getIncidentCoordinates(incident) : null;
 
   return (
-    <div className="h-full w-full overflow-auto px-4 pb-10 pt-28 md:pt-32">
+    <div className="h-full w-full overflow-auto px-4 pb-10 pt-4 md:pt-6">
       <div className="mx-auto max-w-6xl">
         <button
           onClick={() => navigate(-1)}
-          className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#f0d0b6] bg-[rgba(255,251,244,0.9)] px-4 py-2 text-sm font-semibold text-[#6b2a1e] shadow-sm backdrop-blur-sm transition hover:bg-white"
+          className="mb-4 inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#f0d0b6] bg-[rgba(255,251,244,0.9)] px-4 py-2 text-sm font-semibold text-[#6b2a1e] shadow-sm backdrop-blur-sm transition hover:bg-white sm:w-auto"
         >
           <ArrowLeft className="size-4" />
           {copy.back}
@@ -107,7 +107,7 @@ function IncidentDetailPage() {
                   href={buildIncidentRouteUrl(coordinates)}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#fff8ea] px-5 py-3 text-sm font-semibold text-[#690b08] transition hover:bg-white"
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#fff8ea] px-5 py-3 text-sm font-semibold text-[#690b08] transition hover:bg-white sm:w-auto"
                 >
                   <Navigation className="size-4" />
                   {copy.openExternalRoute}
@@ -120,7 +120,7 @@ function IncidentDetailPage() {
                 <div className="border-b border-[#f2dfcf] px-5 py-4">
                   <h2 className="text-lg font-semibold text-[#5c1b16]">{copy.incidentMap}</h2>
                 </div>
-                <div className="h-[420px]">
+                <div className="h-[320px] sm:h-[420px]">
                   <Map incidents={[incident]} selectedIncidentId={incident.id} language={language} />
                 </div>
               </div>

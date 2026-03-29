@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { fetchIncidentStatistics, fetchIncidentStatisticsAI } from '../lib/incidents';
-import type { AIStatisticsInsights, IncidentStatisticsResponse } from '../types/incidents';
+import type { AIStatisticsInsights, IncidentStatisticsResponse, Language } from '../types/incidents';
 
 interface UseIncidentStatisticsResult {
   statistics: IncidentStatisticsResponse | null;
@@ -14,7 +14,7 @@ interface UseIncidentStatisticsResult {
   refresh: () => Promise<void>;
 }
 
-export function useIncidentStatistics(): UseIncidentStatisticsResult {
+export function useIncidentStatistics(language: Language): UseIncidentStatisticsResult {
   const [statistics, setStatistics] = useState<IncidentStatisticsResponse | null>(null);
   const [aiEnabled, setAiEnabled] = useState(false);
   const [aiInsights, setAiInsights] = useState<AIStatisticsInsights | null>(null);
@@ -23,15 +23,11 @@ export function useIncidentStatistics(): UseIncidentStatisticsResult {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadStatistics = async () => {
+  const loadStatistics = async (requestLanguage: Language = language) => {
     try {
       setLoading(true);
       setError(null);
-      setAiLoading(true);
-      setAiError(null);
-      setAiEnabled(false);
-      setAiInsights(null);
-      const nextStatistics = await fetchIncidentStatistics();
+      const nextStatistics = await fetchIncidentStatistics(requestLanguage);
       setStatistics(nextStatistics);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : 'Nao foi possivel carregar as estatisticas.');
@@ -40,11 +36,13 @@ export function useIncidentStatistics(): UseIncidentStatisticsResult {
     }
   };
 
-  const loadAIStatistics = async () => {
+  const loadAIStatistics = async (requestLanguage: Language = language) => {
     try {
       setAiLoading(true);
       setAiError(null);
-      const nextAI = await fetchIncidentStatisticsAI();
+      setAiEnabled(false);
+      setAiInsights(null);
+      const nextAI = await fetchIncidentStatisticsAI(requestLanguage);
       setAiEnabled(nextAI.ai_enabled);
       setAiInsights(nextAI.ai_insights);
       setAiError(nextAI.ai_error);
@@ -56,9 +54,9 @@ export function useIncidentStatistics(): UseIncidentStatisticsResult {
   };
 
   useEffect(() => {
-    void loadStatistics();
-    void loadAIStatistics();
-  }, []);
+    void loadStatistics(language);
+    void loadAIStatistics(language);
+  }, [language]);
 
   return {
     statistics,

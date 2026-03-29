@@ -41,6 +41,7 @@ def get_incident_statistics(
 @router.get("/statistics/ai", response_model=IncidentStatisticsAIResponse)
 def get_incident_statistics_ai(
     session: SessionDep,
+    lang: Annotated[str, Query(pattern="^(pt|en)$")] = "pt",
 ) -> IncidentStatisticsAIResponse:
     incidents = session.exec(
         select(Incident)
@@ -48,7 +49,7 @@ def get_incident_statistics_ai(
     ).all()
 
     statistics = build_incident_statistics(incidents)
-    return build_statistics_ai_response(statistics)
+    return build_statistics_ai_response(statistics, lang)
 
 @router.get("/{incident_id}")
 def get_incident(

@@ -1,35 +1,34 @@
-import type { Incident, IncidentStatisticsAIResponse, IncidentStatisticsResponse } from '../types/incidents';
-import type { Language } from '../types/incidents';
+import type { Incident, IncidentStatisticsAIResponse, IncidentStatisticsResponse, Language } from '../types/incidents';
 import { translations } from './i18n';
 
 const DEFAULT_API_BASE_URL = '/api';
 const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
 const apiBaseUrl = (rawApiBaseUrl && rawApiBaseUrl.length > 0 ? rawApiBaseUrl : DEFAULT_API_BASE_URL).replace(/\/$/, '');
 
-async function request<T>(path: string): Promise<T> {
+async function request<T>(path: string, language: Language = 'pt'): Promise<T> {
   const response = await fetch(`${apiBaseUrl}${path}`);
 
   if (!response.ok) {
-    throw new Error(translations.pt.apiError(response.status));
+    throw new Error(translations[language].apiError(response.status));
   }
 
   return response.json() as Promise<T>;
 }
 
-export function fetchIncidents(limit = 100): Promise<Incident[]> {
-  return request<Incident[]>(`/incidents?limit=${limit}`);
+export function fetchIncidents(limit = 100, language: Language = 'pt'): Promise<Incident[]> {
+  return request<Incident[]>(`/incidents?limit=${limit}`, language);
 }
 
-export function fetchIncident(incidentId: string): Promise<Incident> {
-  return request<Incident>(`/incidents/${incidentId}`);
+export function fetchIncident(incidentId: string, language: Language = 'pt'): Promise<Incident> {
+  return request<Incident>(`/incidents/${incidentId}`, language);
 }
 
-export function fetchIncidentStatistics(): Promise<IncidentStatisticsResponse> {
-  return request<IncidentStatisticsResponse>('/incidents/statistics');
+export function fetchIncidentStatistics(language: Language = 'pt'): Promise<IncidentStatisticsResponse> {
+  return request<IncidentStatisticsResponse>('/incidents/statistics', language);
 }
 
-export function fetchIncidentStatisticsAI(): Promise<IncidentStatisticsAIResponse> {
-  return request<IncidentStatisticsAIResponse>('/incidents/statistics/ai');
+export function fetchIncidentStatisticsAI(language: Language = 'pt'): Promise<IncidentStatisticsAIResponse> {
+  return request<IncidentStatisticsAIResponse>(`/incidents/statistics/ai?lang=${language}`, language);
 }
 
 export function getIncidentCoordinates(incident: Incident): [number, number] | null {

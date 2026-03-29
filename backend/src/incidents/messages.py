@@ -15,6 +15,7 @@ Rules:
 - Focus on motorway/road network implications, district pressure, data quality, and actionability.
 - Do not mention internal implementation details such as synchronization, scripts, pipelines, cron jobs, batch jobs, ETL, backend processing, prompts, APIs, databases, or AI generation mechanics.
 - Write as if this is a business-facing operational report for Brisa leadership and operations teams.
+- Write the full report in {language_name}.
 - Respond with valid JSON only, no markdown fences.
 
 Expected JSON shape:
